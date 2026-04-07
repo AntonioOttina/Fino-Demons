@@ -14,68 +14,53 @@ export default async function handler(req, res) {
         const standings = [];
         const results = [];
 
-        // ===== CLASSIFICA =====
-        const classificaRows = classificaHtml.split("<tr");
+        // ===== FUNZIONE PULIZIA =====
+        function clean(text) {
+            return text
+                .replace(/<[^>]*>/g, "")
+                .replace(/&nbsp;/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
 
-        classificaRows.forEach(row => {
-            if (row.includes("td")) {
-                const cols = row.split("<td");
+        // ===== CLASSIFICA (FIX VERO) =====
+        const teamRegex = /class="sq colfrozen">([^<]+)/g;
 
-                if (cols.length > 5) {
-                    function clean(text) {
-    return text
-        .replace(/<[^>]*>/g, "")   // rimuove HTML
-        .replace(/&nbsp;/g, " ")   // spazi HTML
-        .replace(/\s+/g, " ")      // spazi multipli
-        .trim();
-}
+        let match;
+        let position = 1;
 
-const position = clean(cols[1] || "");
-const team = clean(cols[2] || "");
-const points = clean(cols[cols.length - 1] || "");
+        while ((match = teamRegex.exec(classificaHtml)) !== null) {
+            const teamName = clean(match[1]);
 
-                    if (team && !team.includes("Squadra")) {
-                        standings.push({
-                            position,
-                            team,
-                            points
-                        });
-                    }
-                }
-            }
-        });
+            standings.push({
+                position,
+                team: teamName,
+                points: "-" // PlayBasket non espone facilmente i punti
+            });
 
-        // ===== RISULTATI =====
-        const matches = calendarioHtml.split("<tr");
+            position++;
+        }
 
-        matches.forEach(row => {
-            if (row.includes("-")) {
-                const text = row
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+        // ===== RISULTATI (FIX VERO) =====
+        const resultRegex = /(\d{2}\/\d{2})\s+([A-Za-z\s\.]+)\s+(\d+)\s+(\d+)/g;
 
-                if (text.includes("-")) {
-                    const parts = text.split("-");
+        let game;
 
-                    if (parts.length >= 2) {
-                        const teams = parts[0].trim();
-                        const score = parts[1].trim();
+        while ((game = resultRegex.exec(calendarioHtml)) !== null) {
+            const date = game[1];
+            const teams = clean(game[2]);
+            const score = `${game[3]} - ${game[4]}`;
 
-                        results.push({
-                            date: "",
-                            teams,
-                            score
-                        });
-                    }
-                }
-            }
-        });
+            results.push({
+                date,
+                teams,
+                score
+            });
+        }
 
         res.status(200).json({
             standings: standings.slice(0, 14),
-            results: results.slice(0, 20)
+            results: results.slice(0, 30)
         });
 
     } catch (error) {
