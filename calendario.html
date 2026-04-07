@@ -1,11 +1,67 @@
-<nav>
-    <div class="container nav-content">
-        <a href="index.html" class="nav-logo">
-            <img src="images/logo.jpg" alt="Logo Fino Demons">
-            <span class="nav-logo-text">Fino Demons</span>
-        </a>
-        <div class="nav-menu">
-            <a href="index.html">Home</a>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fino Demons | Calendario e Risultati</title>
+    <meta name="description" content="Calendario e risultati dei Fino Demons.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+
+    <main class="section">
+        <div class="container">
+            <h1 class="page-title">Calendario & Risultati</h1>
+            <p class="section-subtitle">Stagione 2025/2026</p>
+
+            <div class="next-match-card">
+                <span class="next-match-label">Prossima Partita</span>
+                <div class="next-match-details">
+                    <h3>Fino Demons vs Pall. Menaggio</h3>
+                    <div class="next-match-info">
+                        <span><i class="fa-regular fa-clock"></i> Domenica 12 Aprile 2026 - Ore 18:00</span>
+                        <span><i class="fa-solid fa-location-dot"></i> In Casa</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-box">
+                <div class="results-header">
+                    <span>Partite Giocate</span>
+                </div>
+                <div id="results-list" class="results-list"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
+        </div>
+    </footer>
+
+    <script src="js/results.js"></script>
+</body>
+</html>
