@@ -755,3 +755,19 @@ footer {
         font-size: 0.9rem;
     }
 }
+.quick-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* titolo sempre allineato */
+.quick-card h3 {
+    min-height: 48px;
+}
+
+/* testo uniforme */
+.quick-card p {
+    flex-grow: 1;
+}
