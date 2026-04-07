@@ -713,3 +713,44 @@ footer {
     text-align: right;
     font-weight: 800;
 }
+.standings-table {
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+}
+
+.standings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #222;
+    color: white;
+    font-weight: 500;
+}
+
+.standings-row:nth-child(even) {
+    background: #1a1a1a;
+}
+
+.pos {
+    width: 30px;
+    font-weight: bold;
+    color: #aaa;
+}
+
+.team-name {
+    flex: 1;
+    margin-left: 10px;
+}
+
+.points {
+    font-weight: bold;
+    color: #00ffcc;
+}
+
+.highlight {
+    color: #ff4444;
+    font-weight: bold;
+}

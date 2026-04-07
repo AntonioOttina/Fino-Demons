@@ -26,14 +26,16 @@ export default async function handler(req, res) {
         // =========================
         // CLASSIFICA CORRETTA
         // =========================
+let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
 
-        const rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
+// tieni solo le prime 12 squadre (classifica generale)
+rows = rows.slice(0, 12);
 
         rows.forEach(row => {
 
             const position = clean((row.match(/colfrozen'>(\d+)/) || [])[1]);
             const team = clean((row.match(/<a[^>]*>([^<]+)<\/a>/) || [])[1]);
-            const points = clean((row.match(/highlighted_data'>(\d+)/) || [])[1]);
+            const points = clean((row.match(/Punti in classifica[^>]*>(\d+)/) || [])[1]);
 
             if (position && team && points) {
                 standings.push({
