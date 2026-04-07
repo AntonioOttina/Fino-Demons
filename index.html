@@ -2,20 +2,22 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fino Demons | Pallacanestro a Fino Mornasco</title>
-    <meta name="description" content="Fino Demons: la tua squadra di pallacanestro a Fino Mornasco. Vieni a tifare per noi. Partite, tifo organizzato e birra Peroni a 1,50€ al nostro bar.">
-    
-    <!-- Google Fonts: Inter -->
+    <meta name="description" content="Fino Demons: la tua squadra di pallacanestro a Fino Mornasco. Partite, roster, tifo organizzato e info utili.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
+
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Variabili CSS per il Brand (Verde, Bianco e accenti) */
         :root {
             --primary-green: #0f766e;
             --dark-green: #115e59;
@@ -24,11 +26,10 @@
             --text-dark: #1e293b;
             --text-light: #64748b;
             --border-color: #e2e8f0;
-            --win-color: #059669; /* Verde per le vittorie */
-            --loss-color: #dc2626; /* Rosso per le sconfitte */
+            --win-color: #059669;
+            --loss-color: #dc2626;
         }
 
-        /* Reset e Base */
         * {
             margin: 0;
             padding: 0;
@@ -49,6 +50,11 @@
             color: inherit;
         }
 
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
         .container {
             width: 100%;
             max-width: 1100px;
@@ -56,7 +62,6 @@
             padding: 0 20px;
         }
 
-        /* Typography */
         h1, h2, h3 {
             color: var(--text-dark);
             font-weight: 800;
@@ -75,7 +80,6 @@
             font-size: 1.1rem;
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -122,10 +126,9 @@
             border-color: #1ebe5d;
         }
 
-        /* Navbar & Logo */
         nav {
             background-color: var(--white);
-            padding: 15px 0;
+            padding: 14px 0;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
@@ -137,73 +140,125 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0;
         }
 
         .nav-logo img {
-            height: 55px; /* Adattato per il logo fornito */
+            height: 55px;
             width: auto;
-            border-radius: 50%; /* Smussa i bordi del logo tondo */
+            border-radius: 50%;
         }
 
         .nav-logo-text {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--primary-green);
             text-transform: uppercase;
             letter-spacing: 1px;
-            display: none; /* Nascosto su mobile per dare spazio */
         }
 
-        @media (min-width: 480px) {
-            .nav-logo-text { display: block; }
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
         }
 
-        /* Hero Section */
+        .nav-menu a {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: color 0.2s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-green);
+        }
+
         .hero {
-            background-color: var(--off-white);
-            padding: 80px 0 100px;
-            text-align: center;
+            position: relative;
+            padding: 0;
             border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
         }
 
-        .hero h1 {
+        .hero-bg {
+            position: relative;
+            min-height: 540px;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(rgba(15, 118, 110, 0.72), rgba(17, 94, 89, 0.78)),
+                url("hero.jpg") center/cover no-repeat;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--white);
+            width: 100%;
+            padding: 90px 0;
+        }
+
+        .hero-content h1 {
             font-size: 3.5rem;
             line-height: 1.1;
             margin-bottom: 20px;
-            color: var(--primary-green);
+            color: var(--white);
             text-transform: uppercase;
         }
 
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto 40px;
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #e2fdf7;
+            max-width: 700px;
+            margin: 0 auto 35px;
         }
 
         .hero-buttons {
             display: flex;
             gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .local-trust {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: var(--text-light);
+            margin-top: 35px;
+            font-size: 0.95rem;
+            color: #d1fae5;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        /* Services / USPs */
+        .about {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .about-box {
+            background: var(--off-white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 850px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-box p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+
         .usps {
             padding: 80px 0;
             background-color: var(--white);
@@ -240,62 +295,11 @@
             font-size: 0.95rem;
         }
 
-        /* Roster Squadra */
-        .roster {
-            padding: 80px 0;
-            background-color: var(--off-white);
-        }
-
-        .roster-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .player-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .player-number {
-            background: var(--primary-green);
-            color: var(--white);
-            font-size: 1.2rem;
-            font-weight: 800;
-            width: 45px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .player-info h4 {
-            font-size: 1.1rem;
-            margin-bottom: 2px;
-        }
-
-        .player-role {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        /* Nuovo Calendario & Risultati */
         .calendar {
             padding: 80px 0;
             background-color: var(--white);
         }
 
-        /* Prossima Partita Highlight */
         .next-match-card {
             background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
             color: var(--white);
@@ -333,7 +337,6 @@
             flex-wrap: wrap;
         }
 
-        /* Lista Risultati Scorrevole */
         .results-box {
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -350,6 +353,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
         }
 
         .results-list {
@@ -405,13 +409,110 @@
         .win .match-score { color: var(--win-color); background: #ecfdf5; }
         .loss .match-score { color: var(--loss-color); background: #fef2f2; }
 
-        /* Scrollbar personalizzata per la lista risultati */
-        .results-list::-webkit-scrollbar { width: 8px; }
-        .results-list::-webkit-scrollbar-track { background: var(--off-white); }
-        .results-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .results-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .roster {
+            padding: 80px 0;
+            background-color: var(--off-white);
+        }
 
-        /* Info & Location */
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .player-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-card.coach {
+            border: 2px solid var(--primary-green);
+        }
+
+        .player-number {
+            background: var(--primary-green);
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 800;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .player-info h4 {
+            font-size: 1.05rem;
+            margin-bottom: 2px;
+        }
+
+        .player-role {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .gallery {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .gallery-item {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--off-white);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .gallery-caption {
+            padding: 14px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .sponsors {
+            padding: 80px 0;
+            background: var(--off-white);
+        }
+
+        .sponsor-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .sponsor-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 25px 15px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
         .info-section {
             padding: 80px 0;
             background-color: var(--primary-green);
@@ -462,7 +563,6 @@
             color: #34d399;
         }
 
-        /* Call to Action Bottom */
         .cta-bottom {
             padding: 80px 0;
             text-align: center;
@@ -477,7 +577,6 @@
             flex-wrap: wrap;
         }
 
-        /* Footer */
         footer {
             background-color: var(--text-dark);
             color: var(--white);
@@ -492,6 +591,7 @@
         .footer-logo img {
             height: 60px;
             border-radius: 50%;
+            margin: 0 auto;
         }
 
         .footer-social {
@@ -515,385 +615,314 @@
             margin-bottom: 5px;
         }
 
-        /* Responsive */
+        @media (max-width: 900px) {
+            .usp-grid,
+            .gallery-grid,
+            .sponsor-grid,
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-menu {
+                width: 100%;
+            }
+        }
+
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
+            .hero-content h1 { font-size: 2.4rem; }
             .hero-buttons { flex-direction: column; }
-            .usp-grid, .info-grid { grid-template-columns: 1fr; gap: 20px; }
-            
+            .usp-grid,
+            .gallery-grid,
+            .sponsor-grid,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
             .match-row {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
-            .match-score { align-self: flex-start; }
-            
-            .cta-actions { flex-direction: column; }
-            .btn { width: 100%; }
-            .next-match-info { flex-direction: column; gap: 5px; }
+
+            .match-score {
+                align-self: flex-start;
+            }
+
+            .cta-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .nav-logo-text {
+                font-size: 1rem;
+            }
+
+            .nav-menu {
+                gap: 12px;
+            }
+
+            .next-match-info {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navigazione -->
     <nav>
         <div class="container nav-content">
             <div class="nav-logo">
-                <!-- Sostituisci il src con il nome esatto del file del logo se diverso -->
-                <img src="logo.jpg" alt="Logo Fino Demons">
+                <img src="logo.jpg" alt="Logo Fino Demons" loading="lazy">
                 <span class="nav-logo-text">Fino Demons</span>
             </div>
-            <a href="#contatti" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Contattaci</a>
+
+            <div class="nav-menu">
+                <a href="#chi-siamo">Chi siamo</a>
+                <a href="#calendario">Calendario</a>
+                <a href="#roster">Roster</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#sponsor">Sponsor</a>
+                <a href="#contatti" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">Contattaci</a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <header class="hero">
-        <div class="container">
-            <h1>Il Basket a Fino Mornasco</h1>
-            <p>Siamo la squadra di pallacanestro locale. Cuore sul parquet, tifo sugli spalti e la nostra community al centro di tutto.</p>
-            <div class="hero-buttons">
-                <a href="#calendario" class="btn btn-primary"><i class="fa-solid fa-basketball"></i> Vieni a tifare</a>
-                <a href="#chi-siamo" class="btn btn-secondary">Scopri di più</a>
-            </div>
-            <div class="local-trust">
-                <i class="fa-solid fa-location-dot"></i> Via Leonardo da Vinci, 12 - Fino Mornasco (CO)
+        <div class="hero-bg">
+            <div class="container hero-content">
+                <h1>Il Basket a Fino Mornasco</h1>
+                <p>
+                    La squadra di basket di Fino Mornasco che porta in campo passione, grinta e identità.
+                    Seguici in DR4 Lombardia e vivi ogni partita con noi.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#calendario" class="btn btn-primary"><i class="fa-solid fa-basketball"></i> Vieni a tifare</a>
+                    <a href="#chi-siamo" class="btn btn-secondary" style="background: rgba(255,255,255,0.08); color: white; border-color: white;">Scopri di più</a>
+                </div>
+                <div class="local-trust">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Via Leonardo da Vinci, 12 - Fino Mornasco (CO)
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Cosa Offriamo / USPs -->
-    <section id="chi-siamo" class="usps">
-        <div class="container">
-            <h2>Non solo uno sport</h2>
-            <p class="section-subtitle">Vivere la domenica con i Fino Demons significa far parte di una famiglia.</p>
-            
-            <div class="usp-grid">
-                <div class="usp-card">
-                    <div class="usp-icon"><i class="fa-solid fa-basketball"></i></div>
-                    <h3>Pallacanestro</h3>
-                    <p>La nostra squadra scende in campo con grinta e passione per difendere i colori di Fino Mornasco.</p>
-                </div>
-                <div class="usp-card">
-                    <div class="usp-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                    <h3>Tifo Organizzato</h3>
-                    <p>Gli spalti prendono vita. Unisciti al nostro tifo, l'anima pulsante che supporta la squadra dal primo all'ultimo minuto.</p>
-                </div>
-                <div class="usp-card">
-                    <div class="usp-icon"><i class="fa-solid fa-beer-mug-empty"></i></div>
-                    <h3>Bar & Terzo Tempo</h3>
-                    <p>Il grande classico dei Demons: il nostro bar ti aspetta per il pre e post partita. Peroni sempre a 1,50€.</p>
+    <main>
+        <section id="chi-siamo" class="about">
+            <div class="container">
+                <h2>Chi siamo</h2>
+                <p class="section-subtitle">Una squadra, un gruppo, una realtà del territorio.</p>
+                <div class="about-box">
+                    <p>
+                        I Fino Demons rappresentano la pallacanestro a Fino Mornasco. Siamo una squadra che vive
+                        il campionato con intensità, spirito di gruppo e voglia di coinvolgere il paese.
+                        Ogni partita è un’occasione per stare insieme, sostenere i nostri colori e far crescere
+                        una vera community attorno al basket.
+                    </p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Calendario e Risultati (Aggiornato con PDF) -->
-    <section id="calendario" class="calendar">
-        <div class="container">
-            <h2>Calendario & Risultati 25/26</h2>
-            <p class="section-subtitle">Tutti i risultati della stagione del Circolo Ricreativo Finese.</p>
-            
-            <!-- Prossima Partita -->
-            <div class="next-match-card">
-                <span class="next-match-label"><i class="fa-regular fa-calendar-check"></i> Prossima Partita</span>
-                <div class="next-match-details">
-                    <h3>Fino Demons vs Pall. Menaggio</h3>
-                    <div class="next-match-info">
-                        <span><i class="fa-regular fa-clock"></i> Domenica 12 Aprile 2026 - Ore 18:00</span>
-                        <span><i class="fa-solid fa-location-dot"></i> In Casa (Palestra Comunale - Via L. Da Vinci)</span>
-                    </div>
-                </div>
-                <a href="#contatti" class="btn" style="background: var(--white); color: var(--primary-green); margin-top: 25px;">Vieni a sostenerci sugli spalti</a>
-            </div>
+        <section class="usps">
+            <div class="container">
+                <h2>Non solo uno sport</h2>
+                <p class="section-subtitle">Vivere la domenica con i Fino Demons significa far parte di una famiglia.</p>
 
-            <!-- Lista Risultati -->
-            <div class="results-box">
-                <div class="results-header">
-                    <span>Partite Giocate</span>
-                    <span style="font-size: 0.85rem; font-weight: 400; color: var(--text-light);"><i class="fa-solid fa-circle-down"></i> Scorri per vedere tutto</span>
-                </div>
-                <div class="results-list">
-                    
-                    <!-- Ritorno -->
-                    <div class="match-row loss">
-                        <div>
-                            <div class="match-date">29 Mar 2026 • 9ª Ritorno • Trasferta</div>
-                            <div class="match-teams">MAJA Figino - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">65 - 56</div>
+                <div class="usp-grid">
+                    <div class="usp-card">
+                        <div class="usp-icon"><i class="fa-solid fa-basketball"></i></div>
+                        <h3>Pallacanestro</h3>
+                        <p>La nostra squadra scende in campo con grinta e passione per difendere i colori di Fino Mornasco.</p>
                     </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">22 Mar 2026 • 8ª Ritorno • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Commercial Paint Alebbio</div>
-                        </div>
-                        <div class="match-score">66 - 40</div>
+                    <div class="usp-card">
+                        <div class="usp-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                        <h3>Tifo Organizzato</h3>
+                        <p>Gli spalti prendono vita. Unisciti al nostro tifo, l'anima pulsante che supporta la squadra dal primo all'ultimo minuto.</p>
                     </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">15 Mar 2026 • 7ª Ritorno • Trasferta</div>
-                            <div class="match-teams">Bar Pinocchio U.S. Alebbio - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">48 - 54</div>
+                    <div class="usp-card">
+                        <div class="usp-icon"><i class="fa-solid fa-beer-mug-empty"></i></div>
+                        <h3>Bar & Terzo Tempo</h3>
+                        <p>Il nostro bar ti aspetta durante le partite e nel post gara per vivere la serata fino in fondo.</p>
                     </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">08 Mar 2026 • 6ª Ritorno • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Pallacanestro Cabiate</div>
-                        </div>
-                        <div class="match-score">58 - 47</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">22 Feb 2026 • 5ª Ritorno • Trasferta</div>
-                            <div class="match-teams">Basket Antoniana Como - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">42 - 56</div>
-                    </div>
-                    <div class="match-row loss">
-                        <div>
-                            <div class="match-date">15 Feb 2026 • 4ª Ritorno • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - F.B. Leopandrillo Cantù</div>
-                        </div>
-                        <div class="match-score">45 - 52</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">08 Feb 2026 • 3ª Ritorno • Trasferta</div>
-                            <div class="match-teams">Polisportiva Cucciago 80 - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">48 - 61</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">01 Feb 2026 • 2ª Ritorno • Trasferta</div>
-                            <div class="match-teams">Olimpia Cadorago - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">44 - 50</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">25 Gen 2026 • 1ª Ritorno • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - BK Team Femm.92 Cantù</div>
-                        </div>
-                        <div class="match-score">67 - 57</div>
-                    </div>
-
-                    <!-- Andata -->
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">18 Gen 2026 • 11ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - S.C.S. Socco Centro Sport. Fin</div>
-                        </div>
-                        <div class="match-score">72 - 62</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">21 Dic 2025 • 10ª Andata • Trasferta</div>
-                            <div class="match-teams">Pall. Menaggio - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">53 - 60</div>
-                    </div>
-                    <div class="match-row loss">
-                        <div>
-                            <div class="match-date">14 Dic 2025 • 9ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - MAJA Figino</div>
-                        </div>
-                        <div class="match-score">46 - 61</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">07 Dic 2025 • 8ª Andata • Trasferta</div>
-                            <div class="match-teams">Commercial Paint Alebbio - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">35 - 74</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">30 Nov 2025 • 7ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Bar Pinocchio U.S. Alebbio</div>
-                        </div>
-                        <div class="match-score">82 - 46</div>
-                    </div>
-                    <div class="match-row loss">
-                        <div>
-                            <div class="match-date">23 Nov 2025 • 6ª Andata • Trasferta</div>
-                            <div class="match-teams">Pallacanestro Cabiate - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">71 - 62</div>
-                    </div>
-                    <div class="match-row loss">
-                        <div>
-                            <div class="match-date">16 Nov 2025 • 5ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Basket Antoniana Como</div>
-                        </div>
-                        <div class="match-score">44 - 53</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">09 Nov 2025 • 4ª Andata • Trasferta</div>
-                            <div class="match-teams">F.B. Leopandrillo Cantù - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">66 - 73</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">02 Nov 2025 • 3ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Polisportiva Cucciago 80</div>
-                        </div>
-                        <div class="match-score">75 - 29</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">26 Ott 2025 • 2ª Andata • In Casa</div>
-                            <div class="match-teams"><span class="team-highlight">Fino Demons</span> - Olimpia Cadorago</div>
-                        </div>
-                        <div class="match-score">61 - 42</div>
-                    </div>
-                    <div class="match-row win">
-                        <div>
-                            <div class="match-date">19 Ott 2025 • 1ª Andata • Trasferta</div>
-                            <div class="match-teams">BK Team Femm.92 Cantù - <span class="team-highlight">Fino Demons</span></div>
-                        </div>
-                        <div class="match-score">42 - 78</div>
-                    </div>
-
                 </div>
             </div>
-            
-            <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 15px;">
-                <em>Prossima trasferta: 15 Aprile 2026 alle 21:30 contro S.C.S. Socco Centro Sport. Fin.</em>
-            </p>
-        </div>
-    </section>
+        </section>
 
-    <!-- Roster Squadra -->
-    <section id="roster" class="roster">
-        <div class="container">
-            <h2>Il Roster</h2>
-            <p class="section-subtitle">I giocatori dei Fino Demons pronti a scendere in campo.</p>
-            
-            <div class="roster-grid">
-                <!-- Allenatore -->
-                <div class="player-card" style="border: 2px solid var(--primary-green);">
-                    <div class="player-number"><i class="fa-solid fa-clipboard"></i></div>
-                    <div class="player-info">
-                        <h4>Damiano Mazzoccato</h4>
-                        <div class="player-role" style="color: var(--primary-green);">Allenatore</div>
+        <section id="calendario" class="calendar">
+            <div class="container">
+                <h2>Calendario & Risultati 25/26</h2>
+                <p class="section-subtitle">Tutti i risultati della stagione del Circolo Ricreativo Finese.</p>
+
+                <div class="next-match-card">
+                    <span class="next-match-label"><i class="fa-regular fa-calendar-check"></i> Prossima Partita</span>
+                    <div class="next-match-details">
+                        <h3>Fino Demons vs Pall. Menaggio</h3>
+                        <div class="next-match-info">
+                            <span><i class="fa-regular fa-clock"></i> Domenica 12 Aprile 2026 - Ore 18:00</span>
+                            <span><i class="fa-solid fa-location-dot"></i> In Casa (Palestra Comunale - Via L. Da Vinci)</span>
+                        </div>
+                    </div>
+                    <a href="#contatti" class="btn" style="background: var(--white); color: var(--primary-green); margin-top: 25px;">
+                        Vieni a sostenerci sugli spalti
+                    </a>
+                </div>
+
+                <div class="results-box">
+                    <div class="results-header">
+                        <span>Partite Giocate</span>
+                        <span style="font-size: 0.85rem; font-weight: 400; color: var(--text-light);">
+                            <i class="fa-solid fa-circle-down"></i> Scorri per vedere tutto
+                        </span>
+                    </div>
+                    <div id="results-list" class="results-list"></div>
+                </div>
+
+                <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 15px;">
+                    <em>Prossima trasferta: 15 Aprile 2026 alle 21:30 contro S.C.S. Socco Centro Sport. Fin.</em>
+                </p>
+            </div>
+        </section>
+
+        <section id="roster" class="roster">
+            <div class="container">
+                <h2>Il Roster</h2>
+                <p class="section-subtitle">I giocatori dei Fino Demons pronti a scendere in campo.</p>
+                <div id="roster-grid" class="roster-grid"></div>
+            </div>
+        </section>
+
+        <section id="gallery" class="gallery">
+            <div class="container">
+                <h2>Gallery</h2>
+                <p class="section-subtitle">Alcuni momenti della stagione, in campo e fuori.</p>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="gallery1.jpg" alt="Partita dei Fino Demons" loading="lazy">
+                        <div class="gallery-caption">Game day in casa</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="gallery2.jpg" alt="Squadra Fino Demons" loading="lazy">
+                        <div class="gallery-caption">Il gruppo squadra</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="gallery3.jpg" alt="Tifo Fino Demons" loading="lazy">
+                        <div class="gallery-caption">Tifo e atmosfera</div>
                     </div>
                 </div>
-
-                <!-- Giocatori -->
-                <div class="player-card"><div class="player-number">1</div><div class="player-info"><h4>Giacomo Arrighi</h4></div></div>
-                <div class="player-card"><div class="player-number">3</div><div class="player-info"><h4>Davide Guerra</h4></div></div>
-                <div class="player-card"><div class="player-number">5</div><div class="player-info"><h4>Alessandro Corti</h4></div></div>
-                <div class="player-card"><div class="player-number">8</div><div class="player-info"><h4>Giacomo Giani</h4><div class="player-role">Capitano</div></div></div>
-                <div class="player-card"><div class="player-number">9</div><div class="player-info"><h4>Riccardo Gaboardi</h4></div></div>
-                <div class="player-card"><div class="player-number">10</div><div class="player-info"><h4>Agostino Mazzoccato</h4></div></div>
-                <div class="player-card"><div class="player-number">11</div><div class="player-info"><h4>Francesco Parenti</h4></div></div>
-                <div class="player-card"><div class="player-number">14</div><div class="player-info"><h4>Antonino Ottinà</h4></div></div>
-                <div class="player-card"><div class="player-number">16</div><div class="player-info"><h4>Gianluca Colombo</h4></div></div>
-                <div class="player-card"><div class="player-number">22</div><div class="player-info"><h4>Marco Passarello</h4></div></div>
-                <div class="player-card"><div class="player-number">23</div><div class="player-info"><h4>Edoardo Verga</h4></div></div>
-                <div class="player-card"><div class="player-number">24</div><div class="player-info"><h4>Gabriele Molteni</h4></div></div>
-                <div class="player-card"><div class="player-number">35</div><div class="player-info"><h4>Raoul Baitieri</h4></div></div>
-                <div class="player-card"><div class="player-number">90</div><div class="player-info"><h4>Tommaso Borghi</h4></div></div>
-                <div class="player-card"><div class="player-number">99</div><div class="player-info"><h4>Andrea Molteni</h4></div></div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Info e Posizione -->
-    <section class="info-section">
-        <div class="container">
-            <h2>Dove Trovarci</h2>
-            <p class="section-subtitle">Vieni a seguirci a Fino Mornasco o contattaci per qualsiasi informazione.</p>
-            
-            <div class="info-grid">
-                <!-- Orari -->
-                <div class="info-block">
-                    <h3><i class="fa-regular fa-clock"></i> Orari Attività</h3>
-                    <ul class="info-list">
-                        <li>
-                            <i class="fa-solid fa-chevron-right"></i>
-                            <div>
-                                <strong>Allenamento Martedì</strong><br>
-                                20:30 - 22:00
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-chevron-right"></i>
-                            <div>
-                                <strong>Allenamento Venerdì</strong><br>
-                                21:30 - 23:00
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-chevron-right"></i>
-                            <div>
-                                <strong>Partite in Casa (Domenica)</strong><br>
-                                Inizio alle 18:00
-                            </div>
-                        </li>
-                    </ul>
+        <section id="sponsor" class="sponsors">
+            <div class="container">
+                <h2>I nostri sponsor</h2>
+                <p class="section-subtitle">Le realtà che sostengono il progetto Fino Demons.</p>
+
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Sponsor 1</div>
+                    <div class="sponsor-card">Sponsor 2</div>
+                    <div class="sponsor-card">Sponsor 3</div>
+                    <div class="sponsor-card">Sponsor 4</div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Posizione -->
-                <div class="info-block">
-                    <h3><i class="fa-solid fa-map-location-dot"></i> La Nostra Sede</h3>
-                    <ul class="info-list">
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <div>
-                                <strong>Indirizzo</strong><br>
-                                Via Leonardo da Vinci, 12<br>
-                                22073 Fino Mornasco CO, Italia
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-beer-mug-empty"></i>
-                            <div>
-                                <strong>Servizi Extra</strong><br>
-                                Bar aperto durante gli eventi (Peroni a 1,50€)
-                            </div>
-                        </li>
-                    </ul>
-                    <a href="https://maps.app.goo.gl/akwG74qHE2QVySW68" target="_blank" rel="noopener" class="btn" style="background: var(--white); color: var(--dark-green); margin-top: 15px; width: 100%;">
-                        Apri in Google Maps
+        <section class="info-section">
+            <div class="container">
+                <h2>Dove Trovarci</h2>
+                <p class="section-subtitle">Vieni a seguirci a Fino Mornasco o contattaci per qualsiasi informazione.</p>
+
+                <div class="info-grid">
+                    <div class="info-block">
+                        <h3><i class="fa-regular fa-clock"></i> Orari Attività</h3>
+                        <ul class="info-list">
+                            <li>
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <div>
+                                    <strong>Allenamento Martedì</strong><br>
+                                    20:30 - 22:00
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <div>
+                                    <strong>Allenamento Venerdì</strong><br>
+                                    21:30 - 23:00
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <div>
+                                    <strong>Partite in Casa (Domenica)</strong><br>
+                                    Inizio alle 18:00
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block">
+                        <h3><i class="fa-solid fa-map-location-dot"></i> La Nostra Sede</h3>
+                        <ul class="info-list">
+                            <li>
+                                <i class="fa-solid fa-location-dot"></i>
+                                <div>
+                                    <strong>Indirizzo</strong><br>
+                                    Via Leonardo da Vinci, 12<br>
+                                    22073 Fino Mornasco CO, Italia
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-beer-mug-empty"></i>
+                                <div>
+                                    <strong>Servizi Extra</strong><br>
+                                    Bar aperto durante gli eventi
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="https://maps.app.goo.gl/akwG74qHE2QVySW68" target="_blank" rel="noopener" class="btn" style="background: var(--white); color: var(--dark-green); margin-top: 15px; width: 100%;">
+                            Apri in Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contatti" class="cta-bottom">
+            <div class="container">
+                <h2>Entra a far parte della famiglia Demons</h2>
+                <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">
+                    Hai domande sulla squadra, vuoi unirti al tifo o sapere quando giochiamo la prossima partita?
+                    Scrivici o chiamaci.
+                </p>
+
+                <div class="cta-actions">
+                    <a href="https://wa.me/393393590763" target="_blank" rel="noopener" class="btn btn-whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i> Chat WhatsApp
+                    </a>
+                    <a href="tel:+393393590763" class="btn btn-primary">
+                        <i class="fa-solid fa-phone"></i> Chiama Ora
+                    </a>
+                    <a href="mailto:finodemons@gmail.com" class="btn btn-secondary">
+                        <i class="fa-regular fa-envelope"></i> Scrivici un'Email
                     </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Contact & Azioni -->
-    <section id="contatti" class="cta-bottom">
-        <div class="container">
-            <h2>Entra a far parte della famiglia Demons</h2>
-            <p style="color: var(--text-light); max-width: 600px; margin: 0 auto;">Hai domande sulla squadra, vuoi unirti al tifo o sapere quando giochiamo la prossima partita? Scrivici o chiamaci.</p>
-            
-            <div class="cta-actions">
-                <a href="https://wa.me/393393590763" target="_blank" rel="noopener" class="btn btn-whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i> Chat WhatsApp
-                </a>
-                <a href="tel:+393393590763" class="btn btn-primary">
-                    <i class="fa-solid fa-phone"></i> Chiama Ora
-                </a>
-                <a href="mailto:finodemons@gmail.com" class="btn btn-secondary">
-                    <i class="fa-regular fa-envelope"></i> Scrivici un'Email
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-logo">
-                <!-- Richiama lo stesso logo anche nel footer -->
-                <img src="logo.jpg" alt="Logo Fino Demons Footer">
+                <img src="logo.jpg" alt="Logo Fino Demons Footer" loading="lazy">
             </div>
             <div class="footer-social">
                 <a href="https://www.instagram.com/fino_demons/" target="_blank" rel="noopener" aria-label="Instagram dei Fino Demons">
@@ -909,5 +938,91 @@
         </div>
     </footer>
 
+    <script>
+        const rosterData = [
+            { number: "🎯", name: "Damiano Mazzoccato", role: "Allenatore", coach: true },
+            { number: 1, name: "Giacomo Arrighi", role: "" },
+            { number: 3, name: "Davide Guerra", role: "" },
+            { number: 5, name: "Alessandro Corti", role: "" },
+            { number: 8, name: "Giacomo Giani", role: "Capitano" },
+            { number: 9, name: "Riccardo Gaboardi", role: "" },
+            { number: 10, name: "Agostino Mazzoccato", role: "" },
+            { number: 11, name: "Francesco Parenti", role: "" },
+            { number: 14, name: "Antonino Ottinà", role: "" },
+            { number: 16, name: "Gianluca Colombo", role: "" },
+            { number: 22, name: "Marco Passarello", role: "" },
+            { number: 23, name: "Edoardo Verga", role: "" },
+            { number: 24, name: "Gabriele Molteni", role: "" },
+            { number: 35, name: "Raoul Baitieri", role: "" },
+            { number: 90, name: "Tommaso Borghi", role: "" },
+            { number: 99, name: "Andrea Molteni", role: "" }
+        ];
+
+        const resultsData = [
+            { date: "29 Mar 2026 • 9ª Ritorno • Trasferta", teams: "MAJA Figino - Fino Demons", score: "65 - 56", result: "loss" },
+            { date: "22 Mar 2026 • 8ª Ritorno • In Casa", teams: "Fino Demons - Commercial Paint Alebbio", score: "66 - 40", result: "win" },
+            { date: "15 Mar 2026 • 7ª Ritorno • Trasferta", teams: "Bar Pinocchio U.S. Alebbio - Fino Demons", score: "48 - 54", result: "win" },
+            { date: "08 Mar 2026 • 6ª Ritorno • In Casa", teams: "Fino Demons - Pallacanestro Cabiate", score: "58 - 47", result: "win" },
+            { date: "22 Feb 2026 • 5ª Ritorno • Trasferta", teams: "Basket Antoniana Como - Fino Demons", score: "42 - 56", result: "win" },
+            { date: "15 Feb 2026 • 4ª Ritorno • In Casa", teams: "Fino Demons - F.B. Leopandrillo Cantù", score: "45 - 52", result: "loss" },
+            { date: "08 Feb 2026 • 3ª Ritorno • Trasferta", teams: "Polisportiva Cucciago 80 - Fino Demons", score: "48 - 61", result: "win" },
+            { date: "01 Feb 2026 • 2ª Ritorno • Trasferta", teams: "Olimpia Cadorago - Fino Demons", score: "44 - 50", result: "win" },
+            { date: "25 Gen 2026 • 1ª Ritorno • In Casa", teams: "Fino Demons - BK Team Femm.92 Cantù", score: "67 - 57", result: "win" },
+            { date: "18 Gen 2026 • 11ª Andata • In Casa", teams: "Fino Demons - S.C.S. Socco Centro Sport. Fin", score: "72 - 62", result: "win" },
+            { date: "21 Dic 2025 • 10ª Andata • Trasferta", teams: "Pall. Menaggio - Fino Demons", score: "53 - 60", result: "win" },
+            { date: "14 Dic 2025 • 9ª Andata • In Casa", teams: "Fino Demons - MAJA Figino", score: "46 - 61", result: "loss" },
+            { date: "07 Dic 2025 • 8ª Andata • Trasferta", teams: "Commercial Paint Alebbio - Fino Demons", score: "35 - 74", result: "win" },
+            { date: "30 Nov 2025 • 7ª Andata • In Casa", teams: "Fino Demons - Bar Pinocchio U.S. Alebbio", score: "82 - 46", result: "win" },
+            { date: "23 Nov 2025 • 6ª Andata • Trasferta", teams: "Pallacanestro Cabiate - Fino Demons", score: "71 - 62", result: "loss" },
+            { date: "16 Nov 2025 • 5ª Andata • In Casa", teams: "Fino Demons - Basket Antoniana Como", score: "44 - 53", result: "loss" },
+            { date: "09 Nov 2025 • 4ª Andata • Trasferta", teams: "F.B. Leopandrillo Cantù - Fino Demons", score: "66 - 73", result: "win" },
+            { date: "02 Nov 2025 • 3ª Andata • In Casa", teams: "Fino Demons - Polisportiva Cucciago 80", score: "75 - 29", result: "win" },
+            { date: "26 Ott 2025 • 2ª Andata • In Casa", teams: "Fino Demons - Olimpia Cadorago", score: "61 - 42", result: "win" },
+            { date: "19 Ott 2025 • 1ª Andata • Trasferta", teams: "BK Team Femm.92 Cantù - Fino Demons", score: "42 - 78", result: "win" }
+        ];
+
+        function renderRoster() {
+            const rosterGrid = document.getElementById("roster-grid");
+
+            rosterData.forEach(player => {
+                const card = document.createElement("div");
+                card.className = player.coach ? "player-card coach" : "player-card";
+
+                card.innerHTML = `
+                    <div class="player-number">${player.number}</div>
+                    <div class="player-info">
+                        <h4>${player.name}</h4>
+                        ${player.role ? `<div class="player-role" ${player.coach ? 'style="color: var(--primary-green);"' : ""}>${player.role}</div>` : ""}
+                    </div>
+                `;
+
+                rosterGrid.appendChild(card);
+            });
+        }
+
+        function renderResults() {
+            const resultsList = document.getElementById("results-list");
+
+            resultsData.forEach(match => {
+                const highlightedTeams = match.teams.replaceAll("Fino Demons", '<span class="team-highlight">Fino Demons</span>');
+
+                const row = document.createElement("div");
+                row.className = `match-row ${match.result}`;
+
+                row.innerHTML = `
+                    <div>
+                        <div class="match-date">${match.date}</div>
+                        <div class="match-teams">${highlightedTeams}</div>
+                    </div>
+                    <div class="match-score">${match.score}</div>
+                `;
+
+                resultsList.appendChild(row);
+            });
+        }
+
+        renderRoster();
+        renderResults();
+    </script>
 </body>
 </html>
