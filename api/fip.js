@@ -1,31 +1,18 @@
 export default async function handler(req, res) {
     try {
-        const classificaUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=st";
-        const calendarioUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=cl";
+        const classificaUrl = "https://m.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=st";
+        const calendarioUrl = "https://m.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=cl";
 
-        const browserHeaders = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "it-IT,it;q=0.9,en;q=0.8",
-            "Cache-Control": "no-cache",
-            "Pragma": "no-cache"
-        };
+        const responseClassifica = await fetch(classificaUrl);
+        const responseCalendario = await fetch(calendarioUrl);
 
-        const [classificaRes, calendarioRes] = await Promise.all([
-            fetch(classificaUrl, { headers: browserHeaders }),
-            fetch(calendarioUrl, { headers: browserHeaders })
-        ]);
-
-        const classificaHtml = await classificaRes.text();
-        const calendarioHtml = await calendarioRes.text();
+        const classificaHtml = await responseClassifica.text();
+        const calendarioHtml = await responseCalendario.text();
 
         function clean(text) {
             return text
-                .replace(/<[^>]*>/g, " ")
-                .replace(/&nbsp;/gi, " ")
-                .replace(/&amp;/gi, "&")
-                .replace(/&#39;/g, "'")
-                .replace(/&quot;/g, '"')
+                .replace(/<[^>]*>/g, "")
+                .replace(/&nbsp;/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
         }
@@ -33,132 +20,70 @@ export default async function handler(req, res) {
         const standings = [];
         const results = [];
 
-        // =========================
-        // CLASSIFICA
-        // =========================
-        // PlayBasket nel sorgente usa pattern del tipo:
-        // class="sq colfrozen">Leopandrillo Cantu
-        const standingsRegex = /class=["']sq colfrozen["']>\s*([^<\n\r]+)/gi;
+        // ======================
+        // CLASSIFICA (mobile)
+        // ======================
+        const rows = classificaHtml.split("<tr");
 
-        let standingsMatch;
-        let position = 1;
-        const seenTeams = new Set();
+        rows.forEach(row => {
+            const cols = row.split("<td");
 
-        while ((standingsMatch = standingsRegex.exec(classificaHtml)) !== null) {
-            const teamName = clean(standingsMatch[1]);
+            if (cols.length >= 5) {
+                const position = clean(cols[1]);
+                const team = clean(cols[2]);
+                const points = clean(cols[cols.length - 1]);
+
+                if (team && !team.includes("Squadra")) {
+                    standings.push({
+                        position,
+                        team,
+                        points
+                    });
+                }
+            }
+        });
+
+        // ======================
+        // RISULTATI (mobile)
+        // ======================
+        const matches = calendarioHtml.split("<tr");
+
+        matches.forEach(row => {
+            const text = clean(row);
 
             if (
-                !teamName ||
-                teamName.toLowerCase() === "squadra" ||
-                teamName.toLowerCase().includes("classifica") ||
-                teamName.toLowerCase().includes("playbasket")
+                text.includes("Fino") &&
+                text.match(/\d+\s+\d+/)
             ) {
-                continue;
+                const parts = text.split(" ");
+
+                const scoreIndex = parts.findIndex(p => p.match(/^\d+$/));
+
+                if (scoreIndex > 0) {
+                    const homeScore = parts[scoreIndex];
+                    const awayScore = parts[scoreIndex + 1];
+
+                    const teams = parts.slice(0, scoreIndex).join(" ");
+
+                    results.push({
+                        date: "",
+                        teams,
+                        score: `${homeScore} - ${awayScore}`
+                    });
+                }
             }
-
-            const key = teamName.toLowerCase();
-
-            if (!seenTeams.has(key)) {
-                seenTeams.add(key);
-                standings.push({
-                    position: String(position),
-                    team: teamName,
-                    points: "-"
-                });
-                position++;
-            }
-        }
-
-        // =========================
-        // RISULTATI DI FINO
-        // =========================
-        // Formato osservato nel sorgente:
-        // 19/10 BT92 Cantù CR Fino Mornasco 42 78
-        // 26/10 CR Fino Mornasco Olimpia Cadorago 61 42
-
-        const finoNames = [
-            "CR Fino Mornasco",
-            "Fino Mornasco",
-            "Fino Demons"
-        ];
-
-        const escapedFino = finoNames
-            .map(name => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-            .join("|");
-
-        // Caso 1: Fino è squadra ospite
-        const awayRegex = new RegExp(
-            `(\\d{2}\\/\\d{2})\\s+([A-Za-zÀ-ÖØ-öø-ÿ0-9'’.\\- ]+?)\\s+(${escapedFino})\\s+(\\d{1,3})\\s+(\\d{1,3})`,
-            "gi"
-        );
-
-        // Caso 2: Fino è squadra di casa
-        const homeRegex = new RegExp(
-            `(\\d{2}\\/\\d{2})\\s+(${escapedFino})\\s+([A-Za-zÀ-ÖØ-öø-ÿ0-9'’.\\- ]+?)\\s+(\\d{1,3})\\s+(\\d{1,3})`,
-            "gi"
-        );
-
-        let match;
-
-        while ((match = awayRegex.exec(calendarioHtml)) !== null) {
-            const date = clean(match[1]);
-            const homeTeam = clean(match[2]);
-            const awayTeam = clean(match[3]);
-            const homeScore = parseInt(match[4], 10);
-            const awayScore = parseInt(match[5], 10);
-
-            results.push({
-                date,
-                teams: `${homeTeam} - ${awayTeam}`,
-                score: `${homeScore} - ${awayScore}`,
-                result: awayScore > homeScore ? "win" : "loss"
-            });
-        }
-
-        while ((match = homeRegex.exec(calendarioHtml)) !== null) {
-            const date = clean(match[1]);
-            const homeTeam = clean(match[2]);
-            const awayTeam = clean(match[3]);
-            const homeScore = parseInt(match[4], 10);
-            const awayScore = parseInt(match[5], 10);
-
-            const teamsString = `${homeTeam} - ${awayTeam}`;
-            const scoreString = `${homeScore} - ${awayScore}`;
-
-            const duplicate = results.some(
-                r => r.date === date && r.teams === teamsString && r.score === scoreString
-            );
-
-            if (!duplicate) {
-                results.push({
-                    date,
-                    teams: teamsString,
-                    score: scoreString,
-                    result: homeScore > awayScore ? "win" : "loss"
-                });
-            }
-        }
-
-        // Ordinamento semplice per data MM/DD
-        results.sort((a, b) => {
-            const [da, ma] = a.date.split("/").map(Number);
-            const [db, mb] = b.date.split("/").map(Number);
-            return (ma * 100 + da) - (mb * 100 + db);
         });
 
         res.status(200).json({
             debug: {
-                classificaStatus: classificaRes.status,
-                calendarioStatus: calendarioRes.status,
                 standingsCount: standings.length,
-                finoResultsCount: results.length
+                resultsCount: results.length
             },
             standings,
             results
         });
-    } catch (error) {
-        res.status(500).json({
-            error: String(error)
-        });
+
+    } catch (err) {
+        res.status(500).json({ error: err.toString() });
     }
 }
