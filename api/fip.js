@@ -1,42 +1,69 @@
 export default async function handler(req, res) {
     try {
-        const url = "https://www.playbasket.it/lombardia/divisione-regionale-4";
-        const response = await fetch(url);
-        const html = await response.text();
+        const classificaUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=st";
+        const calendarioUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=cl";
 
-        const results = [];
+        const [classificaRes, calendarioRes] = await Promise.all([
+            fetch(classificaUrl),
+            fetch(calendarioUrl)
+        ]);
+
+        const classificaHtml = await classificaRes.text();
+        const calendarioHtml = await calendarioRes.text();
+
         const standings = [];
+        const results = [];
 
-        // ===== PARSING RISULTATI =====
-        const matchRegex = /(\d{2}\/\d{2}\/\d{4}).*?([A-Za-z\s]+)\s+(\d+)\s*-\s*(\d+)\s+([A-Za-z\s]+)/g;
+        // ===== CLASSIFICA =====
+        const classificaRows = classificaHtml.split("<tr");
 
-        let match;
-        while ((match = matchRegex.exec(html)) !== null) {
-            results.push({
-                date: match[1],
-                teams: `${match[2].trim()} - ${match[5].trim()}`,
-                score: `${match[3]} - ${match[4]}`,
-                result: match[2].includes("Fino") || match[5].includes("Fino")
-                    ? (parseInt(match[3]) > parseInt(match[4]) ? "win" : "loss")
-                    : ""
-            });
-        }
+        classificaRows.forEach(row => {
+            if (row.includes("td")) {
+                const cols = row.split("<td");
 
-        // ===== PARSING CLASSIFICA =====
-        const tableRegex = /(\d+)\s+([A-Za-z\s]+)\s+(\d+)/g;
+                if (cols.length > 5) {
+                    const position = cols[1]?.replace(/<[^>]*>/g, "").trim();
+                    const team = cols[2]?.replace(/<[^>]*>/g, "").trim();
+                    const points = cols[cols.length - 1]?.replace(/<[^>]*>/g, "").trim();
 
-        let team;
-        while ((team = tableRegex.exec(html)) !== null) {
-            standings.push({
-                position: team[1],
-                team: team[2].trim(),
-                points: team[3]
-            });
-        }
+                    if (team && !team.includes("Squadra")) {
+                        standings.push({
+                            position,
+                            team,
+                            points
+                        });
+                    }
+                }
+            }
+        });
+
+        // ===== RISULTATI =====
+        const matches = calendarioHtml.split("<tr");
+
+        matches.forEach(row => {
+            if (row.includes("-")) {
+                const text = row.replace(/<[^>]*>/g, " ").trim();
+
+                if (text.includes("-")) {
+                    const parts = text.split("-");
+
+                    if (parts.length >= 2) {
+                        const teams = parts[0].trim();
+                        const score = parts[1].trim();
+
+                        results.push({
+                            date: "",
+                            teams,
+                            score
+                        });
+                    }
+                }
+            }
+        });
 
         res.status(200).json({
-            results: results.slice(0, 10),
-            standings: standings.slice(0, 12)
+            standings: standings.slice(0, 14),
+            results: results.slice(0, 20)
         });
 
     } catch (error) {

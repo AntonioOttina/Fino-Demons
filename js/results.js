@@ -11,18 +11,12 @@ async function loadData() {
             resultsList.innerHTML = "";
 
             data.results.forEach(match => {
-                const highlightedTeams = match.teams.replaceAll(
-                    "Fino Demons",
-                    '<span class="team-highlight">Fino Demons</span>'
-                );
-
                 const row = document.createElement("div");
-                row.className = `match-row ${match.result}`;
+                row.className = "match-row";
 
                 row.innerHTML = `
                     <div>
-                        <div class="match-date">${match.date}</div>
-                        <div class="match-teams">${highlightedTeams}</div>
+                        <div class="match-teams">${match.teams}</div>
                     </div>
                     <div class="match-score">${match.score}</div>
                 `;
