@@ -15,66 +15,69 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-    <div class="container nav-content">
-        <a href="index.html" class="nav-logo">
-            <img src="images/logo.jpg" alt="Logo Fino Demons">
-            <span class="nav-logo-text">Fino Demons</span>
-        </a>
-        <div class="nav-menu">
-            <a href="index.html">Home</a>
-        </div>
-    </div>
-</nav>
-
-<!-- CONTENUTO -->
-<main class="section">
-    <div class="container">
-
-        <h1 class="page-title">Calendario e Risultati</h1>
-        <p class="section-subtitle">
-            Risultati stagionali & Classifica 
-        </p>
-
-        <!-- RISULTATI -->
-        <div class="results-box">
-            <div class="results-header">
-                <span>Risultati</span>
-            </div>
-
-            <div id="results-list" class="results-list">
-                <!-- JS -->
+    <!-- NAV -->
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
             </div>
         </div>
+    </nav>
 
-        <!-- CLASSIFICA -->
-        <div class="results-box">
-            <div class="results-header">
-                <span>Classifica</span>
+    <!-- CONTENUTO -->
+    <main class="section">
+        <div class="container">
+
+            <h1 class="page-title">Calendario e Risultati</h1>
+            <p class="section-subtitle">
+                Risultati stagionali & Classifica 
+            </p>
+
+            <!-- RISULTATI -->
+            <div class="results-box">
+                <div class="results-header">
+                    <span>Risultati</span>
+                </div>
+
+                <div id="results-list" class="results-list">
+                    <!-- popolato via JS -->
+                </div>
             </div>
 
-            <div id="standings-table" class="standings-table">
-                <!-- JS -->
+            <!-- CLASSIFICA -->
+            <div class="standings-box">
+                <div class="results-header">
+                    <span>Classifica</span>
+                </div>
+
+                <div id="standings-list">
+                    <!-- popolato via JS -->
+                </div>
             </div>
+
         </div>
+    </main>
 
-    </div>
-</main>
-
-<!-- FOOTER -->
-<footer>
-    <div class="container">
-        <div class="footer-logo">
-            <img src="images/logo.jpg" alt="Logo Fino Demons">
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
         </div>
-        <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
-        <p class="footer-text">&copy; 2026 Fino Demons</p>
-    </div>
-</footer>
+    </footer>
 
-<!-- JS -->
-<script src="js/results.js"></script>
+    <!-- JS -->
+    <script src="js/results.js"></script>
+
 
 </body>
 </html>
+  <h2>Classifica</h2>
+<div id="standings-table" class="standings-table"></div>
