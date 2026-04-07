@@ -4,38 +4,39 @@ export default async function handler(req, res) {
         const response = await fetch(url);
         const html = await response.text();
 
-        // ====== ESTRAZIONE DATI ======
         const results = [];
         const standings = [];
 
-        // 👇 parsing base (semplificato)
-        // (PlayBasket usa molte classi dinamiche → facciamo parsing semplice)
+        // ===== PARSING RISULTATI =====
+        const matchRegex = /(\d{2}\/\d{2}\/\d{4}).*?([A-Za-z\s]+)\s+(\d+)\s*-\s*(\d+)\s+([A-Za-z\s]+)/g;
 
-        const lines = html.split("\n");
+        let match;
+        while ((match = matchRegex.exec(html)) !== null) {
+            results.push({
+                date: match[1],
+                teams: `${match[2].trim()} - ${match[5].trim()}`,
+                score: `${match[3]} - ${match[4]}`,
+                result: match[2].includes("Fino") || match[5].includes("Fino")
+                    ? (parseInt(match[3]) > parseInt(match[4]) ? "win" : "loss")
+                    : ""
+            });
+        }
 
-        lines.forEach(line => {
-            // RISULTATI (molto base)
-            if (line.includes("Fino")) {
-                results.push({
-                    date: "Auto",
-                    teams: line.trim(),
-                    score: "-",
-                    result: ""
-                });
-            }
+        // ===== PARSING CLASSIFICA =====
+        const tableRegex = /(\d+)\s+([A-Za-z\s]+)\s+(\d+)/g;
 
-            // CLASSIFICA (placeholder)
-            if (line.includes("Demons")) {
-                standings.push({
-                    team: "Fino Demons",
-                    points: "-"
-                });
-            }
-        });
+        let team;
+        while ((team = tableRegex.exec(html)) !== null) {
+            standings.push({
+                position: team[1],
+                team: team[2].trim(),
+                points: team[3]
+            });
+        }
 
         res.status(200).json({
             results: results.slice(0, 10),
-            standings: standings.slice(0, 10)
+            standings: standings.slice(0, 12)
         });
 
     } catch (error) {

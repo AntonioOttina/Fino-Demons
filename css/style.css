@@ -696,3 +696,20 @@ footer {
         font-size: 1.4rem;
     }
 }
+.standings-row {
+    display: grid;
+    grid-template-columns: 50px 1fr 60px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    font-weight: 600;
+}
+
+.standings-row:hover {
+    background: var(--off-white);
+}
+
+.standings-row span:last-child {
+    text-align: right;
+    font-weight: 800;
+}
