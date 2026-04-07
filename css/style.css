@@ -754,3 +754,63 @@ footer {
     color: #ff4444;
     font-weight: bold;
 }
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+}
+
+/* CONTENITORE */
+.standings-table {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* RIGA */
+.standings-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #222;
+    color: white;
+    transition: 0.2s;
+}
+
+/* hover figo */
+.standings-row:hover {
+    background: #1f1f1f;
+}
+
+/* righe alternate */
+.standings-row:nth-child(even) {
+    background: #181818;
+}
+
+/* posizione */
+.pos {
+    width: 35px;
+    font-weight: bold;
+    color: #aaa;
+}
+
+/* squadra */
+.team-name {
+    flex: 1;
+    font-size: 15px;
+}
+
+/* punti */
+.points {
+    font-weight: bold;
+    font-size: 16px;
+    color: #00ffcc;
+}
+
+/* evidenzia FINO 🔥 */
+.highlight {
+    color: #ff4444;
+    font-weight: bold;
+}
