@@ -713,16 +713,10 @@ footer {
     text-align: right;
     font-weight: 800;
 }
-/* CLASSIFICA */
-.section-title {
-    margin-top: 24px;
-    margin-bottom: 12px;
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-dark);
-}
+/* ===== CLASSIFICA PULITA ===== */
 
 .standings-table {
+    margin-top: 20px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     overflow: hidden;
@@ -731,84 +725,98 @@ footer {
 
 .standings-row {
     display: grid;
-    grid-template-columns: 40px 1fr 55px;
+    grid-template-columns: 50px 1fr 60px;
     align-items: center;
-    padding: 10px 14px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border-color);
-    font-size: 0.95rem;
-    background: var(--white);
-}
-
-.standings-row:last-child {
-    border-bottom: none;
-}
-
-.pos {
-    font-weight: 700;
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
-
-.team-name {
-    font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-dark);
 }
 
+/* hover leggero */
+.standings-row:hover {
+    background: var(--off-white);
+}
+
+/* posizione */
+.pos {
+    font-weight: 800;
+    color: var(--text-light);
+}
+
+/* nome squadra */
+.team-name {
+    font-size: 15px;
+}
+
+/* punti */
 .points {
     text-align: right;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--primary-green);
-    font-size: 0.95rem;
 }
 
+/* evidenzia FINO */
 .highlight {
     color: var(--primary-green);
     font-weight: 800;
 }
-
-/* ROSTER */
-.roster-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-}
-
-.player-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.player-card.coach {
-    border: 2px solid var(--primary-green);
-}
-
-.player-number {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: var(--primary-green);
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: bold;
     color: white;
+}
+
+/* CONTENITORE */
+.standings-table {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* RIGA */
+.standings-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    flex-shrink: 0;
+    padding: 14px 16px;
+    border-bottom: 1px solid #222;
+    color: white;
+    transition: 0.2s;
 }
 
-.player-info h4 {
-    font-size: 1.05rem;
-    margin-bottom: 2px;
+/* hover figo */
+.standings-row:hover {
+    background: #1f1f1f;
 }
 
-.player-role {
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-light);
+/* righe alternate */
+.standings-row:nth-child(even) {
+    background: #181818;
+}
+
+/* posizione */
+.pos {
+    width: 35px;
+    font-weight: bold;
+    color: #aaa;
+}
+
+/* squadra */
+.team-name {
+    flex: 1;
+    font-size: 15px;
+}
+
+/* punti */
+.points {
+    font-weight: bold;
+    font-size: 16px;
+    color: #00ffcc;
+}
+
+/* evidenzia FINO 🔥 */
+.highlight {
+    color: #ff4444;
+    font-weight: bold;
 }
