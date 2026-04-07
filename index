@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fino Demons | Home</title>
+    <meta name="description" content="Sito ufficiale dei Fino Demons, squadra di basket di Fino Mornasco.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="contatti.html" class="btn btn-primary nav-btn">Contattaci</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero hero-home">
+        <div class="hero-overlay">
+            <div class="container hero-content">
+                <h1>Fino Demons</h1>
+                <p>
+                    La squadra di basket di Fino Mornasco. Passione, tifo, comunità e partite da vivere insieme.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="dashboard.html" class="btn btn-primary">
+                        <i class="fa-solid fa-table-columns"></i> Vai alla Dashboard
+                    </a>
+                    <a href="calendario.html" class="btn btn-secondary hero-outline">
+                        <i class="fa-regular fa-calendar"></i> Vedi il calendario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="home-intro section">
+            <div class="container">
+                <h2>Benvenuto nel mondo Demons</h2>
+                <p class="section-subtitle">
+                    Un sito semplice per seguire la squadra, i risultati, il roster e tutto quello che gira attorno ai Fino Demons.
+                </p>
+
+                <div class="quick-grid">
+                    <a class="quick-card" href="chi-siamo.html">
+                        <i class="fa-solid fa-users"></i>
+                        <h3>Chi siamo</h3>
+                        <p>Scopri l’identità della squadra e il nostro spirito.</p>
+                    </a>
+
+                    <a class="quick-card" href="calendario.html">
+                        <i class="fa-solid fa-basketball"></i>
+                        <h3>Calendario</h3>
+                        <p>Partite giocate, risultati e prossimi impegni.</p>
+                    </a>
+
+                    <a class="quick-card" href="roster.html">
+                        <i class="fa-solid fa-shirt"></i>
+                        <h3>Roster</h3>
+                        <p>Allenatore e giocatori pronti a scendere in campo.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
+        </div>
+    </footer>
+
+</body>
+</html>
