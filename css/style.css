@@ -713,46 +713,52 @@ footer {
     text-align: right;
     font-weight: 800;
 }
+/* ===== CLASSIFICA PULITA ===== */
+
 .standings-table {
     margin-top: 20px;
-    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
     overflow: hidden;
-    background: #111;
+    background: var(--white);
 }
 
 .standings-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 50px 1fr 60px;
     align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid #222;
-    color: white;
-    font-weight: 500;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
 }
 
-.standings-row:nth-child(even) {
-    background: #1a1a1a;
+/* hover leggero */
+.standings-row:hover {
+    background: var(--off-white);
 }
 
+/* posizione */
 .pos {
-    width: 30px;
-    font-weight: bold;
-    color: #aaa;
+    font-weight: 800;
+    color: var(--text-light);
 }
 
+/* nome squadra */
 .team-name {
-    flex: 1;
-    margin-left: 10px;
+    font-size: 15px;
 }
 
+/* punti */
 .points {
-    font-weight: bold;
-    color: #00ffcc;
+    text-align: right;
+    font-weight: 800;
+    color: var(--primary-green);
 }
 
+/* evidenzia FINO */
 .highlight {
-    color: #ff4444;
-    font-weight: bold;
+    color: var(--primary-green);
+    font-weight: 800;
 }
 .section-title {
     margin-top: 30px;
