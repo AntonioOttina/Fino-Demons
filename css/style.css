@@ -308,6 +308,7 @@ nav {
     border-radius: 10px;
     overflow: hidden;
     background: white;
+    margin-bottom: 28px;
 }
 
 .results-header {
@@ -402,6 +403,52 @@ nav {
     gap: 18px;
     flex-wrap: wrap;
     color: #d8fff7;
+}
+
+/* CLASSIFICA */
+.standings-table {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--white);
+}
+
+.standings-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 55px;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--white);
+    font-size: 0.95rem;
+}
+
+.standings-row:last-child {
+    border-bottom: none;
+}
+
+.pos {
+    font-weight: 700;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.team-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.points {
+    text-align: right;
+    font-weight: 700;
+    color: var(--primary-green);
+    font-size: 0.95rem;
+}
+
+.highlight {
+    color: var(--primary-green);
+    font-weight: 800;
 }
 
 /* ROSTER */
@@ -516,6 +563,104 @@ nav {
     color: var(--text-light);
 }
 
+/* HOME INFO SECTION */
+.info-section {
+    padding: 80px 0;
+    background-color: var(--primary-green);
+    color: var(--white);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.info-block {
+    background: #156b64;
+    padding: 30px;
+    border-radius: 18px;
+}
+
+.info-block h3 {
+    margin-bottom: 24px;
+    font-size: 2rem;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.info-list {
+    list-style: none;
+}
+
+.info-list li {
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.info-list i {
+    margin-top: 6px;
+    color: #34d399;
+    font-size: 1.8rem;
+}
+
+.info-list strong {
+    color: var(--white);
+    font-size: 1.15rem;
+}
+
+.info-list div {
+    color: #e6fffb;
+    font-size: 1rem;
+}
+
+.btn-maps {
+    background: var(--white);
+    color: var(--primary-green);
+    border: 2px solid var(--white);
+    width: 100%;
+    margin-top: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.btn-maps:hover {
+    background: #f3f4f6;
+    border-color: #f3f4f6;
+}
+
+/* INSTAGRAM */
+.instagram-card {
+    max-width: 500px;
+    margin: 0 auto;
+    background: var(--off-white);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.instagram-card i {
+    font-size: 3rem;
+    color: var(--primary-green);
+    margin-bottom: 18px;
+}
+
+.instagram-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+}
+
+.instagram-card p {
+    color: var(--text-light);
+    margin-bottom: 24px;
+}
+
 /* FOOTER */
 footer {
     background: var(--text-dark);
@@ -586,104 +731,7 @@ footer {
         flex-direction: column;
         gap: 6px;
     }
-}
-.info-section {
-    padding: 80px 0;
-    background-color: var(--primary-green);
-    color: var(--white);
-}
 
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.info-block {
-    background: #156b64;
-    padding: 30px;
-    border-radius: 18px;
-}
-
-.info-block h3 {
-    margin-bottom: 24px;
-    font-size: 2rem;
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.info-list {
-    list-style: none;
-}
-
-.info-list li {
-    margin-bottom: 28px;
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-.info-list i {
-    margin-top: 6px;
-    color: #34d399;
-    font-size: 1.8rem;
-}
-
-.info-list strong {
-    color: var(--white);
-    font-size: 1.15rem;
-}
-
-.info-list div {
-    color: #e6fffb;
-    font-size: 1rem;
-}
-
-.btn-maps {
-    background: var(--white);
-    color: var(--primary-green);
-    border: 2px solid var(--white);
-    width: 100%;
-    margin-top: 10px;
-    font-size: 1.05rem;
-    font-weight: 700;
-}
-
-.btn-maps:hover {
-    background: #f3f4f6;
-    border-color: #f3f4f6;
-}
-
-.instagram-card {
-    max-width: 500px;
-    margin: 0 auto;
-    background: var(--off-white);
-    border: 1px solid var(--border-color);
-    border-radius: 18px;
-    padding: 40px 30px;
-    text-align: center;
-}
-
-.instagram-card i {
-    font-size: 3rem;
-    color: var(--primary-green);
-    margin-bottom: 18px;
-}
-
-.instagram-card h3 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    color: var(--text-dark);
-}
-
-.instagram-card p {
-    color: var(--text-light);
-    margin-bottom: 24px;
-}
-
-@media (max-width: 768px) {
     .info-grid {
         grid-template-columns: 1fr;
     }
@@ -695,128 +743,15 @@ footer {
     .info-list i {
         font-size: 1.4rem;
     }
-}
-.standings-row {
-    display: grid;
-    grid-template-columns: 50px 1fr 60px;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border-color);
-    align-items: center;
-    font-weight: 600;
-}
 
-.standings-row:hover {
-    background: var(--off-white);
-}
+    .standings-row {
+        grid-template-columns: 34px 1fr 48px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
 
-.standings-row span:last-child {
-    text-align: right;
-    font-weight: 800;
-}
-/* ===== CLASSIFICA PULITA ===== */
-
-.standings-table {
-    margin-top: 20px;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--white);
-}
-
-.standings-row {
-    display: grid;
-    grid-template-columns: 50px 1fr 60px;
-    align-items: center;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: 600;
-}
-
-/* hover leggero */
-.standings-row:hover {
-    background: var(--off-white);
-}
-
-/* posizione */
-.pos {
-    font-weight: 800;
-    color: var(--text-light);
-}
-
-/* nome squadra */
-.team-name {
-    font-size: 15px;
-}
-
-/* punti */
-.points {
-    text-align: right;
-    font-weight: 800;
-    color: var(--primary-green);
-}
-
-/* evidenzia FINO */
-.highlight {
-    color: var(--primary-green);
-    font-weight: 800;
-}
-.section-title {
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-}
-
-/* CONTENITORE */
-.standings-table {
-    background: #111;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-/* RIGA */
-.standings-row {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #222;
-    color: white;
-    transition: 0.2s;
-}
-
-/* hover figo */
-.standings-row:hover {
-    background: #1f1f1f;
-}
-
-/* righe alternate */
-.standings-row:nth-child(even) {
-    background: #181818;
-}
-
-/* posizione */
-.pos {
-    width: 35px;
-    font-weight: bold;
-    color: #aaa;
-}
-
-/* squadra */
-.team-name {
-    flex: 1;
-    font-size: 15px;
-}
-
-/* punti */
-.points {
-    font-weight: bold;
-    font-size: 16px;
-    color: #00ffcc;
-}
-
-/* evidenzia FINO 🔥 */
-.highlight {
-    color: #ff4444;
-    font-weight: bold;
+    .team-name,
+    .points {
+        font-size: 0.9rem;
+    }
 }
