@@ -1,32 +1,52 @@
-const resultsData = [
-    { date: "29 Mar 2026 • 9ª Ritorno • Trasferta", teams: "MAJA Figino - Fino Demons", score: "65 - 56", result: "loss" },
-    { date: "22 Mar 2026 • 8ª Ritorno • In Casa", teams: "Fino Demons - Commercial Paint Alebbio", score: "66 - 40", result: "win" },
-    { date: "15 Mar 2026 • 7ª Ritorno • Trasferta", teams: "Bar Pinocchio U.S. Alebbio - Fino Demons", score: "48 - 54", result: "win" },
-    { date: "08 Mar 2026 • 6ª Ritorno • In Casa", teams: "Fino Demons - Pallacanestro Cabiate", score: "58 - 47", result: "win" },
-    { date: "22 Feb 2026 • 5ª Ritorno • Trasferta", teams: "Basket Antoniana Como - Fino Demons", score: "42 - 56", result: "win" },
-    { date: "15 Feb 2026 • 4ª Ritorno • In Casa", teams: "Fino Demons - F.B. Leopandrillo Cantù", score: "45 - 52", result: "loss" }
-];
-
 const resultsList = document.getElementById("results-list");
+const standingsList = document.getElementById("standings-list");
 
-if (resultsList) {
-    resultsData.forEach(match => {
-        const highlightedTeams = match.teams.replaceAll(
-            "Fino Demons",
-            '<span class="team-highlight">Fino Demons</span>'
-        );
+async function loadData() {
+    try {
+        const res = await fetch("/api/fip");
+        const data = await res.json();
 
-        const row = document.createElement("div");
-        row.className = `match-row ${match.result}`;
+        // RISULTATI
+        if (resultsList) {
+            resultsList.innerHTML = "";
 
-        row.innerHTML = `
-            <div>
-                <div class="match-date">${match.date}</div>
-                <div class="match-teams">${highlightedTeams}</div>
-            </div>
-            <div class="match-score">${match.score}</div>
-        `;
+            data.results.forEach(match => {
+                const row = document.createElement("div");
+                row.className = "match-row";
 
-        resultsList.appendChild(row);
-    });
+                row.innerHTML = `
+                    <div>
+                        <div class="match-date">${match.date}</div>
+                        <div class="match-teams">${match.teams}</div>
+                    </div>
+                    <div class="match-score">${match.score}</div>
+                `;
+
+                resultsList.appendChild(row);
+            });
+        }
+
+        // CLASSIFICA
+        if (standingsList) {
+            standingsList.innerHTML = "";
+
+            data.standings.forEach((team, index) => {
+                const row = document.createElement("div");
+                row.className = "standings-row";
+
+                row.innerHTML = `
+                    <span>${index + 1}</span>
+                    <span>${team.team}</span>
+                    <span>${team.points}</span>
+                `;
+
+                standingsList.appendChild(row);
+            });
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
 }
+
+loadData();
