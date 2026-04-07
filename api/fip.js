@@ -36,111 +36,113 @@ export default async function handler(req, res) {
         // =========================
         // CLASSIFICA
         // =========================
-        // Pattern visto nel sorgente che hai incollato:
-        // title='Posizione in graduatoria' class='colfrozen'>1
+        // Prendiamo tutti i team reali dal pattern:
         // class="sq colfrozen">CR Fino Mornasco
-        const standingRegex =
-            /Posizione in graduatoria['"]?\s+class=['"]colfrozen['"]>(\d+)[\s\S]*?class=["']sq colfrozen["']>([^<\n\r]+)[\s\S]*?Punti subiti di media a gara['"]>([\d.,]+)/gi;
+        const teamOnlyRegex = /class=["']sq colfrozen["']>\s*([^<\n\r]+)/gi;
 
-        let standingMatch;
-        while ((standingMatch = standingRegex.exec(classificaHtml)) !== null) {
-            standings.push({
-                position: clean(standingMatch[1]),
-                team: clean(standingMatch[2]),
-                points: "-"
-            });
-        }
-
-        // Fallback classifica se il pattern sopra non trova nulla
-        if (standings.length === 0) {
-            const teamOnlyRegex = /class=["']sq colfrozen["']>([^<\n\r]+)/gi;
-            let teamMatch;
-            let pos = 1;
-
-            while ((teamMatch = teamOnlyRegex.exec(classificaHtml)) !== null) {
-                const teamName = clean(teamMatch[1]);
-
-                if (
-                    teamName &&
-                    !teamName.toLowerCase().includes("classifica") &&
-                    !teamName.toLowerCase().includes("playbasket")
-                ) {
-                    standings.push({
-                        position: String(pos),
-                        team: teamName,
-                        points: "-"
-                    });
-                    pos++;
-                }
-            }
-        }
-
-        // Rimuove eventuali duplicati
-        const uniqueStandings = [];
+        let teamMatch;
+        let pos = 1;
         const seenTeams = new Set();
 
-        for (const row of standings) {
-            const key = row.team.toLowerCase();
+        while ((teamMatch = teamOnlyRegex.exec(classificaHtml)) !== null) {
+            const teamName = clean(teamMatch[1]);
+
+            if (
+                !teamName ||
+                teamName.toLowerCase() === "squadra" ||
+                teamName.toLowerCase().includes("classifica") ||
+                teamName.toLowerCase().includes("playbasket")
+            ) {
+                continue;
+            }
+
+            const key = teamName.toLowerCase();
+
             if (!seenTeams.has(key)) {
                 seenTeams.add(key);
-                uniqueStandings.push(row);
+
+                standings.push({
+                    position: String(pos),
+                    team: teamName,
+                    points: "-"
+                });
+
+                pos++;
             }
         }
 
         // =========================
         // RISULTATI
         // =========================
-        // Pattern visto nel testo che hai incollato:
+        // Dalla stringa che hai incollato il formato è tipo:
         // 19/10 BT92 Cantù CR Fino Mornasco 42 78
-        const resultRegex =
-            /(\d{2}\/\d{2})\s+([A-Za-zÀ-ÖØ-öø-ÿ'’. \-]+?)\s+([A-Za-zÀ-ÖØ-öø-ÿ'’. \-]+?)\s+(\d{1,3})\s+(\d{1,3})(?=\s|$)/g;
+        // 26/10 CR Fino Mornasco Olimpia Cadorago 61 42
+        //
+        // Usiamo una regex che prende SOLO le partite di Fino.
+        const finoResultsRegex = /(\d{2}\/\d{2})\s+([A-Za-zÀ-ÖØ-öø-ÿ0-9'’. \-]+?)\s+(CR Fino Mornasco|Fino Mornasco|Fino Demons)\s+(\d{1,3})\s+(\d{1,3})/gi;
 
         let resultMatch;
-        while ((resultMatch = resultRegex.exec(calendarioHtml)) !== null) {
+
+        while ((resultMatch = finoResultsRegex.exec(calendarioHtml)) !== null) {
             const date = clean(resultMatch[1]);
             const homeTeam = clean(resultMatch[2]);
             const awayTeam = clean(resultMatch[3]);
-            const homeScore = clean(resultMatch[4]);
-            const awayScore = clean(resultMatch[5]);
-
-            // filtra match chiaramente non validi
-            if (
-                homeTeam.length < 3 ||
-                awayTeam.length < 3 ||
-                /^\d+$/.test(homeTeam) ||
-                /^\d+$/.test(awayTeam)
-            ) {
-                continue;
-            }
+            const homeScore = parseInt(resultMatch[4], 10);
+            const awayScore = parseInt(resultMatch[5], 10);
 
             results.push({
                 date,
                 teams: `${homeTeam} - ${awayTeam}`,
                 score: `${homeScore} - ${awayScore}`,
-                result:
-                    homeTeam.toLowerCase().includes("fino")
-                        ? (parseInt(homeScore, 10) > parseInt(awayScore, 10) ? "win" : "loss")
-                        : awayTeam.toLowerCase().includes("fino")
-                        ? (parseInt(awayScore, 10) > parseInt(homeScore, 10) ? "win" : "loss")
-                        : ""
+                result: awayScore > homeScore ? "win" : "loss"
             });
         }
 
-        // Teniamo solo risultati dove compare Fino
-        const finoResults = results.filter(
-            (r) => r.teams.toLowerCase().includes("fino")
-        );
+        // Fallback: Fino come squadra di casa
+        const finoHomeRegex = /(\d{2}\/\d{2})\s+(CR Fino Mornasco|Fino Mornasco|Fino Demons)\s+([A-Za-zÀ-ÖØ-öø-ÿ0-9'’. \-]+?)\s+(\d{1,3})\s+(\d{1,3})/gi;
+
+        while ((resultMatch = finoHomeRegex.exec(calendarioHtml)) !== null) {
+            const date = clean(resultMatch[1]);
+            const homeTeam = clean(resultMatch[2]);
+            const awayTeam = clean(resultMatch[3]);
+            const homeScore = parseInt(resultMatch[4], 10);
+            const awayScore = parseInt(resultMatch[5], 10);
+
+            const teamsString = `${homeTeam} - ${awayTeam}`;
+
+            // evita duplicati
+            const alreadyExists = results.some(
+                (r) => r.date === date && r.teams === teamsString && r.score === `${homeScore} - ${awayScore}`
+            );
+
+            if (!alreadyExists) {
+                results.push({
+                    date,
+                    teams: teamsString,
+                    score: `${homeScore} - ${awayScore}`,
+                    result: homeScore > awayScore ? "win" : "loss"
+                });
+            }
+        }
+
+        // ordina i risultati per data "MM/DD" in modo semplice
+        results.sort((a, b) => {
+            const [da, ma] = a.date.split("/").map(Number);
+            const [db, mb] = b.date.split("/").map(Number);
+            const va = ma * 100 + da;
+            const vb = mb * 100 + db;
+            return va - vb;
+        });
 
         res.status(200).json({
             debug: {
                 classificaStatus: classificaRes.status,
                 calendarioStatus: calendarioRes.status,
-                standingsCount: uniqueStandings.length,
-                allResultsCount: results.length,
-                finoResultsCount: finoResults.length
+                standingsCount: standings.length,
+                finoResultsCount: results.length
             },
-            standings: uniqueStandings.slice(0, 14),
-            results: finoResults
+            standings,
+            results
         });
     } catch (error) {
         res.status(500).json({
