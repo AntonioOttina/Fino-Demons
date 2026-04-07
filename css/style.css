@@ -44,6 +44,15 @@ img {
     padding: 0 20px;
 }
 
+.narrow {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.center {
+    text-align: center;
+}
+
 .section {
     padding: 80px 0;
 }
@@ -59,12 +68,20 @@ img {
     text-align: center;
     color: var(--text-light);
     margin-bottom: 40px;
+    font-size: 1.05rem;
+}
+
+.page-text {
+    color: var(--text-light);
+    font-size: 1.05rem;
+    margin-bottom: 18px;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     padding: 14px 26px;
     border-radius: 8px;
     font-weight: 600;
@@ -75,27 +92,95 @@ img {
 .btn-primary {
     background: var(--primary-green);
     color: white;
+    border-color: var(--primary-green);
 }
 
 .btn-primary:hover {
     background: var(--dark-green);
+    border-color: var(--dark-green);
 }
 
-/* ================= HERO HOME ================= */
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-green);
+    border-color: var(--primary-green);
+}
+
+.btn-secondary:hover {
+    background: var(--off-white);
+}
+
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+    border-color: #25D366;
+}
+
+.btn-whatsapp:hover {
+    background: #1ebe5d;
+    border-color: #1ebe5d;
+}
+
+nav {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    min-height: 78px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-logo img {
+    height: 54px;
+    border-radius: 50%;
+}
+
+.nav-logo-text {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary-green);
+    text-transform: uppercase;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.nav-menu a:hover {
+    color: var(--primary-green);
+}
+
+.nav-btn {
+    padding: 8px 16px;
+    font-size: 0.95rem;
+}
 
 .hero-home {
-    background: url("../images/hero.jpg") center center / cover no-repeat;
+    background: url("../images/hero.jpg") center/cover no-repeat;
 }
 
 .hero-overlay {
-    background: linear-gradient(
-        rgba(15, 118, 110, 0.45),
-        rgba(17, 94, 89, 0.55)
-    );
+    background: linear-gradient(rgba(15,118,110,0.75), rgba(17,94,89,0.8));
 }
 
 .hero-content {
-    min-height: 550px;
+    min-height: 540px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,9 +190,10 @@ img {
 }
 
 .hero-content h1 {
-    font-size: 3.8rem;
+    font-size: 3.7rem;
     line-height: 1.1;
     margin-bottom: 20px;
+    color: white;
     text-transform: uppercase;
 }
 
@@ -115,22 +201,377 @@ img {
     max-width: 700px;
     font-size: 1.2rem;
     margin-bottom: 30px;
+    color: #e7fffb;
 }
 
-/* ================= GRID DASHBOARD ================= */
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
-.quick-grid {
+.hero-outline {
+    color: white;
+    border-color: white;
+}
+
+.hero-outline:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+.quick-grid,
+.dashboard-grid,
+.gallery-grid,
+.sponsor-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
 
-.quick-card {
+.quick-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.sponsor-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.quick-card,
+.dashboard-card,
+.sponsor-card {
     background: var(--off-white);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 28px;
+    padding: 28px 22px;
     text-align: center;
+    transition: 0.25s ease;
+}
+
+.quick-card:hover,
+.dashboard-card:hover {
+    transform: translateY(-4px);
+}
+
+.quick-card i,
+.dashboard-card i {
+    font-size: 2rem;
+    color: var(--primary-green);
+    margin-bottom: 14px;
+}
+
+.quick-card h3,
+.dashboard-card h3 {
+    margin-bottom: 10px;
+}
+
+.quick-card p,
+.dashboard-card p {
+    color: var(--text-light);
+}
+
+.gallery-item {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+
+.sponsor-card {
+    font-weight: 700;
+    color: var(--primary-green);
+    background: white;
+}
+
+.results-box {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+}
+
+.results-header {
+    padding: 16px 20px;
+    background: var(--off-white);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 800;
+}
+
+.results-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.match-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.match-row:last-child {
+    border-bottom: none;
+}
+
+.match-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.match-teams {
+    font-weight: 600;
+}
+
+.team-highlight {
+    color: var(--primary-green);
+    font-weight: 800;
+}
+
+.match-score {
+    min-width: 88px;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    background: var(--off-white);
+}
+
+.win .match-score {
+    color: var(--win-color);
+    background: #ecfdf5;
+}
+
+.loss .match-score {
+    color: var(--loss-color);
+    background: #fef2f2;
+}
+
+.next-match-card {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: white;
+    padding: 30px;
+    border-radius: 14px;
+    margin-bottom: 35px;
+    text-align: center;
+}
+
+.next-match-label {
+    display: inline-block;
+    margin-bottom: 14px;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.next-match-details h3 {
+    color: white;
+    margin-bottom: 12px;
+    font-size: 2rem;
+}
+
+.next-match-info {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: #d8fff7;
+}
+
+.roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.player-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.player-card.coach {
+    border: 2px solid var(--primary-green);
+}
+
+.player-number {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--primary-green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.player-role {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+.cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.contact-box {
+    margin-top: 30px;
+    color: var(--text-light);
+}
+
+footer {
+    background: var(--text-dark);
+    color: white;
+    text-align: center;
+    padding: 40px 0 24px;
+}
+
+.footer-logo img {
+    height: 58px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+}
+
+.footer-text {
+    color: #cbd5e1;
+    margin-bottom: 6px;
+    font-size: 0.92rem;
+}
+
+@media (max-width: 900px) {
+    .quick-grid,
+    .dashboard-grid,
+    .gallery-grid,
+    .sponsor-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 0;
+    }
+
+    .hero-content h1 {
+        font-size: 2.6rem;
+    }
+
+    .hero-buttons,
+    .cta-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .quick-grid,
+    .dashboard-grid,
+    .gallery-grid,
+    .sponsor-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .match-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .next-match-info {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+.placeholder-card {
+    background: var(--off-white);
+    border: 1px solid var(--border-color);
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-box {
+    text-align: center;
+    color: var(--text-light);
+    padding: 30px;
+}
+
+.placeholder-box i {
+    font-size: 2.2rem;
+    color: var(--primary-green);
+    margin-bottom: 14px;
+}
+
+.placeholder-box p {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.sponsor-grid-three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.sponsor-detailed {
+    background: white;
+    text-align: center;
+    padding: 32px 24px;
+}
+
+.sponsor-detailed i {
+    font-size: 2rem;
+    color: var(--primary-green);
+    margin-bottom: 16px;
+}
+
+.sponsor-detailed h3 {
+    margin-bottom: 12px;
+    color: var(--text-dark);
+}
+
+.sponsor-detailed p {
+    color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+    .sponsor-grid-three {
+        grid-template-columns: 1fr;
+    }
+}
+.nav-home {
+    justify-content: flex-start;
+}
+.quick-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -138,52 +579,6 @@ img {
     transform: translateY(-6px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
-
-.quick-card i {
-    font-size: 2rem;
-    color: var(--primary-green);
-    margin-bottom: 14px;
-}
-
-/* ================= NAV ================= */
-
-nav {
-    background: white;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-}
-
-.nav-content {
-    min-height: 78px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* ================= FOOTER ================= */
-
-footer {
-    background: var(--text-dark);
-    color: white;
-    text-align: center;
-    padding: 40px 0;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 900px) {
-    .quick-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-
-    .quick-grid {
-        grid-template-columns: 1fr;
-    }
+.hero-home {
+    background: url('../images/hero.jpg') center/cover no-repeat;
 }
