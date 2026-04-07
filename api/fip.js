@@ -22,9 +22,17 @@ export default async function handler(req, res) {
                 const cols = row.split("<td");
 
                 if (cols.length > 5) {
-                    const position = cols[1]?.replace(/<[^>]*>/g, "").trim();
-                    const team = cols[2]?.replace(/<[^>]*>/g, "").trim();
-                    const points = cols[cols.length - 1]?.replace(/<[^>]*>/g, "").trim();
+                    function clean(text) {
+    return text
+        .replace(/<[^>]*>/g, "")   // rimuove HTML
+        .replace(/&nbsp;/g, " ")   // spazi HTML
+        .replace(/\s+/g, " ")      // spazi multipli
+        .trim();
+}
+
+const position = clean(cols[1] || "");
+const team = clean(cols[2] || "");
+const points = clean(cols[cols.length - 1] || "");
 
                     if (team && !team.includes("Squadra")) {
                         standings.push({
@@ -42,7 +50,11 @@ export default async function handler(req, res) {
 
         matches.forEach(row => {
             if (row.includes("-")) {
-                const text = row.replace(/<[^>]*>/g, " ").trim();
+                const text = row
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
                 if (text.includes("-")) {
                     const parts = text.split("-");
