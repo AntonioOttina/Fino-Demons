@@ -1,97 +1,66 @@
-const resultsList = document.getElementById("results-list");
-const standingsList = document.getElementById("standings-list");
-
 async function loadData() {
-    try {
-        const res = await fetch("/api/fip");
-        const data = await res.json();
+    const res = await fetch("/api/fip");
+    const data = await res.json();
 
-        if (resultsList) {
-            resultsList.innerHTML = "";
+    // ===== CLASSIFICA (già ok) =====
+    const standingsContainer = document.getElementById("standings-table");
 
-            if (!data.results || data.results.length === 0) {
-                resultsList.innerHTML = `
-                    <div class="match-row">
-                        <div>
-                            <div class="match-date">Nessun risultato trovato</div>
-                            <div class="match-teams">Controlla il parsing dell'API</div>
-                        </div>
-                        <div class="match-score">-</div>
-                    </div>
-                `;
-            } else {
-                data.results.forEach(match => {
-                    const highlightedTeams = match.teams.replace(
-                        /CR Fino Mornasco|Fino Demons|Fino Mornasco/gi,
-                        '<span class="team-highlight">$&</span>'
-                    );
+    if (standingsContainer && data.standings) {
+        standingsContainer.innerHTML = "";
 
-                    const row = document.createElement("div");
-                    row.className = `match-row ${match.result || ""}`;
+        data.standings.forEach(team => {
+            const row = document.createElement("div");
+            row.className = "standings-row";
 
-                    row.innerHTML = `
-                        <div>
-                            <div class="match-date">${match.date}</div>
-                            <div class="match-teams">${highlightedTeams}</div>
-                        </div>
-                        <div class="match-score">${match.score}</div>
-                    `;
+            row.innerHTML = `
+                <div class="pos">${team.position}</div>
+                <div class="team-name ${team.team.includes("Fino") ? "highlight" : ""}">
+                    ${team.team}
+                </div>
+                <div class="points">${team.points}</div>
+            `;
 
-                    resultsList.appendChild(row);
-                });
-            }
-        }
+            standingsContainer.appendChild(row);
+        });
+    }
 
-        if (standingsList) {
-            standingsList.innerHTML = "";
+    // ===== RISULTATI =====
+    const resultsContainer = document.getElementById("results-list");
 
-            if (!data.standings || data.standings.length === 0) {
-                standingsList.innerHTML = `
-                    <div class="standings-row">
-                        <span>-</span>
-                        <span>Nessuna classifica trovata</span>
-                        <span>-</span>
-                    </div>
-                `;
-            } else {
-                data.standings.forEach(team => {
-                    const isFino =
-                        team.team.toLowerCase().includes("fino");
+    if (resultsContainer && data.results) {
+        resultsContainer.innerHTML = "";
 
-                    const row = document.createElement("div");
-                    row.className = "standings-row";
+        data.results.slice(0, 10).forEach(match => {
+            const row = document.createElement("div");
+            row.className = "match-row";
 
-                    row.innerHTML = `
-                        <span>${team.position}</span>
-                        <span class="${isFino ? "team-highlight" : ""}">${team.team}</span>
-                        <span>${team.points}</span>
-                    `;
-
-                    standingsList.appendChild(row);
-                });
-            }
-        }
-    } catch (err) {
-        console.error(err);
-
-        if (resultsList) {
-            resultsList.innerHTML = `
-                <div class="match-row">
-                    <div>
-                        <div class="match-date">Errore</div>
-                        <div class="match-teams">Impossibile caricare i risultati</div>
-                    </div>
-                    <div class="match-score">!</div>
+            row.innerHTML = `
+                <div class="match-teams">
+                    ${match.teams}
+                </div>
+                <div class="match-score">
+                    ${match.score}
                 </div>
             `;
-        }
 
-        if (standingsList) {
-            standingsList.innerHTML = `
-                <div class="standings-row">
-                    <span>!</span>
-                    <span>Impossibile caricare la classifica</span>
-                    <span>!</span>
+            resultsContainer.appendChild(row);
+        });
+    }
+
+    // ===== PROSSIMA PARTITA =====
+    const nextMatchContainer = document.getElementById("next-match");
+
+    if (nextMatchContainer && data.results && data.results.length > 0) {
+        const next = data.results.find(m => !m.score.includes("0-0"));
+
+        if (next) {
+            nextMatchContainer.innerHTML = `
+                <div class="next-match-card">
+                    <div class="next-match-label">Prossima partita</div>
+                    <div class="next-match-details">
+                        <h3>${next.teams}</h3>
+                        <p>${next.score}</p>
+                    </div>
                 </div>
             `;
         }
