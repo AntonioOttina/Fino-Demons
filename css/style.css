@@ -512,3 +512,73 @@ footer {
         gap: 6px;
     }
 }
+.placeholder-card {
+    background: var(--off-white);
+    border: 1px solid var(--border-color);
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-box {
+    text-align: center;
+    color: var(--text-light);
+    padding: 30px;
+}
+
+.placeholder-box i {
+    font-size: 2.2rem;
+    color: var(--primary-green);
+    margin-bottom: 14px;
+}
+
+.placeholder-box p {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.sponsor-grid-three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.sponsor-detailed {
+    background: white;
+    text-align: center;
+    padding: 32px 24px;
+}
+
+.sponsor-detailed i {
+    font-size: 2rem;
+    color: var(--primary-green);
+    margin-bottom: 16px;
+}
+
+.sponsor-detailed h3 {
+    margin-bottom: 12px;
+    color: var(--text-dark);
+}
+
+.sponsor-detailed p {
+    color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+    .sponsor-grid-three {
+        grid-template-columns: 1fr;
+    }
+}
+.nav-home {
+    justify-content: flex-start;
+}
+.quick-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quick-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.hero-home {
+    background: url('../images/hero.jpg') center/cover no-repeat;
+}
