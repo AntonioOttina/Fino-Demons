@@ -12,10 +12,12 @@ export default async function handler(req, res) {
         const calendarioHtml = await calendarioRes.text();
 
         function clean(text) {
-            return text
+            return String(text || "")
                 .replace(/<[^>]*>/g, "")
-                .replace(/&nbsp;/g, " ")
-                .replace(/&amp;/g, "&")
+                .replace(/&nbsp;/gi, " ")
+                .replace(/&amp;/gi, "&")
+                .replace(/&#39;/g, "'")
+                .replace(/&quot;/g, '"')
                 .replace(/\s+/g, " ")
                 .trim();
         }
@@ -24,18 +26,21 @@ export default async function handler(req, res) {
         const results = [];
 
         // =========================
-        // CLASSIFICA CORRETTA
+        // CLASSIFICA GENERALE
         // =========================
-let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
-
-// tieni solo le prime 12 squadre (classifica generale)
-rows = rows.slice(0, 12);
+        // Prende tutte le righe classifica e tiene solo le prime 12
+        // che corrispondono alla classifica generale del girone.
+        let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
+        rows = rows.slice(0, 12);
 
         rows.forEach(row => {
+            const positionMatch = row.match(/title=['"]Posizione in graduatoria['"][^>]*class=['"]colfrozen['"]>(\d+)/i);
+            const teamMatch = row.match(/class=["']sq colfrozen["'][^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/i);
+            const pointsMatch = row.match(/title=['"]Punti in classifica['"][^>]*class=['"]highlighted_data['"]>(\d+)/i);
 
-            const position = clean((row.match(/colfrozen'>(\d+)/) || [])[1]);
-            const team = clean((row.match(/<a[^>]*>([^<]+)<\/a>/) || [])[1]);
-            const points = clean((row.match(/Punti in classifica[^>]*>(\d+)/) || [])[1]);
+            const position = clean(positionMatch ? positionMatch[1] : "");
+            const team = clean(teamMatch ? teamMatch[1] : "");
+            const points = clean(pointsMatch ? pointsMatch[1] : "");
 
             if (position && team && points) {
                 standings.push({
@@ -47,51 +52,25 @@ rows = rows.slice(0, 12);
         });
 
         // =========================
-        // RISULTATI CORRETTI
+        // RISULTATI
         // =========================
-
+        // Per ora li lasciamo base: se più avanti vuoi li sistemiamo meglio.
         const matchRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,3})\s+(\d{1,3})/gi;
 
         let match;
-
         while ((match = matchRegex.exec(calendarioHtml)) !== null) {
-
-            const date = match[1];
+            const date = clean(match[1]);
             const teamsText = clean(match[2]);
             const s1 = parseInt(match[3], 10);
             const s2 = parseInt(match[4], 10);
 
             if (!teamsText.includes("Fino")) continue;
 
-            const words = teamsText.split("CR Fino Mornasco");
-
-            let home = "";
-            let away = "";
-
-            if (words.length === 2) {
-                if (words[0].trim() === "") {
-                    home = "CR Fino Mornasco";
-                    away = words[1].trim();
-                } else {
-                    home = words[0].trim();
-                    away = "CR Fino Mornasco";
-                }
-            } else {
-                continue;
-            }
-
-            let result = "";
-            if (home.includes("Fino")) {
-                result = s1 > s2 ? "win" : "loss";
-            } else {
-                result = s2 > s1 ? "win" : "loss";
-            }
-
             results.push({
                 date,
-                teams: `${home} - ${away}`,
+                teams: teamsText,
                 score: `${s1} - ${s2}`,
-                result
+                result: ""
             });
         }
 
@@ -103,8 +82,9 @@ rows = rows.slice(0, 12);
             standings,
             results
         });
-
     } catch (err) {
-        res.status(500).json({ error: err.toString() });
+        res.status(500).json({
+            error: err.toString()
+        });
     }
 }
