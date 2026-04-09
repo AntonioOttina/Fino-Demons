@@ -26,19 +26,19 @@ export default async function handler(req, res) {
         const results = [];
 
         // =========================
-        // CLASSIFICA GENERALE
+        // CLASSIFICA (STABILE)
         // =========================
         let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
         rows = rows.slice(0, 12);
 
         rows.forEach(row => {
-            const positionMatch = row.match(/title=['"]Posizione in graduatoria['"][^>]*class=['"]colfrozen['"]>(\d+)/i);
-            const teamMatch = row.match(/class=["']sq colfrozen["'][^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/i);
-            const pointsMatch = row.match(/title=['"]Punti in classifica['"][^>]*class=['"]highlighted_data['"]>(\d+)/i);
+            const positionMatch = row.match(/colfrozen['"]>(\d+)/i);
+            const teamMatch = row.match(/<a[^>]*>([^<]+)<\/a>/i);
+            const pointsMatch = row.match(/highlighted_data['"]>(\d+)/i);
 
-            const position = clean(positionMatch ? positionMatch[1] : "");
-            const team = clean(teamMatch ? teamMatch[1] : "");
-            const points = clean(pointsMatch ? pointsMatch[1] : "");
+            const position = clean(positionMatch?.[1]);
+            const team = clean(teamMatch?.[1]);
+            const points = clean(pointsMatch?.[1]);
 
             if (position && team && points) {
                 standings.push({
@@ -50,26 +50,40 @@ export default async function handler(req, res) {
         });
 
         // =========================
-        // RISULTATI
+        // RISULTATI (FIX ROBUSTO)
         // =========================
-        const matchRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,3})\s+(\d{1,3})/gi;
 
-        let match;
-        while ((match = matchRegex.exec(calendarioHtml)) !== null) {
-            const date = clean(match[1]);
-            const teamsText = clean(match[2]);
-            const s1 = parseInt(match[3], 10);
-            const s2 = parseInt(match[4], 10);
+        const rowsCal = calendarioHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
 
-            if (!teamsText.includes("Fino")) continue;
+        rowsCal.forEach(row => {
+            const text = clean(row);
+
+            // prendi solo partite con Fino
+            if (!text.toLowerCase().includes("fino")) return;
+
+            // cerca punteggio
+            const scoreMatch = text.match(/(\d{1,3})\s*-\s*(\d{1,3})/);
+
+            // cerca data
+            const dateMatch = text.match(/\d{2}\/\d{2}/);
+
+            let teams = text;
+
+            if (scoreMatch) {
+                teams = text.split(scoreMatch[0])[0].trim();
+            }
+
+            if (teams.length < 5) return;
 
             results.push({
-                date,
-                teams: teamsText,
-                score: `${s1} - ${s2}`,
-                result: ""
+                date: clean(dateMatch?.[0] || ""),
+                teams,
+                score: scoreMatch ? scoreMatch[0] : "VS"
             });
-        }
+        });
+
+        // più recenti sopra
+        results.reverse();
 
         res.status(200).json({
             debug: {
@@ -77,8 +91,9 @@ export default async function handler(req, res) {
                 resultsCount: results.length
             },
             standings,
-            results
+            results: results.slice(0, 20)
         });
+
     } catch (err) {
         res.status(500).json({
             error: err.toString()
