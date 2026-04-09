@@ -835,3 +835,148 @@ footer {
     font-size: 14px;
     color: #666;
 }
+/* ===== PROSSIMA PARTITA ===== */
+#next-match {
+    margin-bottom: 28px;
+}
+
+.next-match-card {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: var(--white);
+    padding: 28px 24px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(15, 118, 110, 0.18);
+}
+
+.next-match-label {
+    display: inline-block;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.next-match-teams {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 14px;
+}
+
+.next-match-vs {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d8fff7;
+    text-transform: uppercase;
+}
+
+.next-match-info {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: #e6fffb;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* ===== RISULTATI / CALENDARIO ===== */
+.match-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.match-row:last-child {
+    border-bottom: none;
+}
+
+.match-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.match-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.match-teams {
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.match-separator {
+    color: var(--text-light);
+}
+
+.match-side {
+    flex-shrink: 0;
+}
+
+.match-score {
+    min-width: 84px;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    background: var(--off-white);
+}
+
+.match-score.win {
+    color: var(--win-color);
+    background: #ecfdf5;
+}
+
+.match-score.loss {
+    color: var(--loss-color);
+    background: #fef2f2;
+}
+
+.match-time {
+    min-width: 72px;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    background: var(--off-white);
+    color: var(--primary-green);
+}
+
+@media (max-width: 768px) {
+    .next-match-teams {
+        font-size: 1.3rem;
+    }
+
+    .next-match-info {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .match-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .match-side {
+        width: 100%;
+    }
+
+    .match-score,
+    .match-time {
+        margin-top: 6px;
+    }
+}

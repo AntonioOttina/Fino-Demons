@@ -3,7 +3,7 @@ async function loadData() {
     const data = await res.json();
 
     // =========================
-    // CLASSIFICA (OK)
+    // CLASSIFICA
     // =========================
     const standingsContainer = document.getElementById("standings-table");
 
@@ -27,85 +27,79 @@ async function loadData() {
     }
 
     // =========================
-    // RISULTATI
+    // PROSSIMA PARTITA
+    // =========================
+    const nextMatchContainer = document.getElementById("next-match");
+
+    if (nextMatchContainer && data.results) {
+        const upcoming = data.results
+            .filter(match => match.status === "upcoming" && match.dateObj)
+            .sort((a, b) => new Date(a.dateObj) - new Date(b.dateObj));
+
+        const next = upcoming[0];
+
+        if (next) {
+            const [team1, team2] = next.teams.split(" - ").map(t => t.trim());
+
+            nextMatchContainer.innerHTML = `
+                <div class="next-match-card">
+                    <div class="next-match-label">Prossima partita</div>
+                    <div class="next-match-teams">
+                        <span class="${team1.toLowerCase().includes("fino") ? "team-highlight" : ""}">${team1}</span>
+                        <span class="next-match-vs">vs</span>
+                        <span class="${team2.toLowerCase().includes("fino") ? "team-highlight" : ""}">${team2}</span>
+                    </div>
+                    <div class="next-match-info">
+                        <span><i class="fa-regular fa-calendar"></i> ${next.date}</span>
+                        <span><i class="fa-regular fa-clock"></i> ${next.time}</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            nextMatchContainer.innerHTML = "";
+        }
+    }
+
+    // =========================
+    // RISULTATI + CALENDARIO
     // =========================
     const resultsContainer = document.getElementById("results-list");
 
     if (resultsContainer && data.results) {
         resultsContainer.innerHTML = "";
 
-        data.results.forEach(match => {
+        const ordered = [...data.results].sort((a, b) => {
+            if (!a.dateObj || !b.dateObj) return 0;
+            return new Date(a.dateObj) - new Date(b.dateObj);
+        });
 
-            const isFinoHome = match.teams.toLowerCase().includes("fino");
-
-            // split squadre
-            const teamsSplit = match.teams.split(" - ");
-            const team1 = teamsSplit[0] || "";
-            const team2 = teamsSplit[1] || "";
-
-            // punteggio
-            let scoreClass = "";
-            let scoreText = match.score;
-
-            if (match.score !== "VS") {
-                const [s1, s2] = match.score.split("-").map(n => parseInt(n.trim()));
-
-                if (team1.toLowerCase().includes("fino")) {
-                    scoreClass = s1 > s2 ? "win" : "loss";
-                } else if (team2.toLowerCase().includes("fino")) {
-                    scoreClass = s2 > s1 ? "win" : "loss";
-                }
-            }
+        ordered.forEach(match => {
+            const [team1, team2] = match.teams.split(" - ").map(t => t.trim());
 
             const row = document.createElement("div");
             row.className = "match-row";
 
             row.innerHTML = `
-                <div class="match-date">${match.date}</div>
-
-                <div class="match-teams">
-                    <span class="${team1.toLowerCase().includes("fino") ? "highlight" : ""}">
-                        ${team1}
-                    </span>
-                    -
-                    <span class="${team2.toLowerCase().includes("fino") ? "highlight" : ""}">
-                        ${team2}
-                    </span>
+                <div class="match-main">
+                    <div class="match-date">${match.date}</div>
+                    <div class="match-teams">
+                        <span class="${team1.toLowerCase().includes("fino") ? "team-highlight" : ""}">${team1}</span>
+                        <span class="match-separator"> - </span>
+                        <span class="${team2.toLowerCase().includes("fino") ? "team-highlight" : ""}">${team2}</span>
+                    </div>
                 </div>
 
-                <div class="match-score ${scoreClass}">
-                    ${scoreText}
+                <div class="match-side">
+                    ${
+                        match.status === "played"
+                            ? `<div class="match-score ${match.result}">${match.score}</div>`
+                            : `<div class="match-time">${match.time}</div>`
+                    }
                 </div>
             `;
 
             resultsContainer.appendChild(row);
         });
-    }
-
-    // =========================
-    // PROSSIMA PARTITA (BOX FIGO)
-    // =========================
-    const nextMatchContainer = document.getElementById("next-match");
-
-    if (nextMatchContainer && data.results) {
-
-        const next = data.results.find(m => m.score === "VS");
-
-        if (next) {
-            nextMatchContainer.innerHTML = `
-                <div class="next-match-card">
-                    <div class="next-match-title">PROSSIMA PARTITA</div>
-
-                    <div class="next-match-teams">
-                        ${next.teams}
-                    </div>
-
-                    <div class="next-match-date">
-                        ${next.date}
-                    </div>
-                </div>
-            `;
-        }
     }
 }
 
