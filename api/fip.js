@@ -37,7 +37,6 @@ export default async function handler(req, res) {
 
             if (lower === "pallacanestro cabiate sq.b") return "Pallacanestro Cabiate";
             if (lower === "pallacanestro figino sq.b") return "Pallacanestro Figino";
-            if (lower === "pol. cucciago 80") return "Pol. Cucciago 80";
 
             return cleaned;
         }
@@ -62,7 +61,7 @@ export default async function handler(req, res) {
         }
 
         const standings = [];
-        const matches = [];
+        const results = [];
 
         // =========================
         // CLASSIFICA
@@ -89,16 +88,19 @@ export default async function handler(req, res) {
         });
 
         // =========================
-        // CALENDARIO COMPLETO
+        // RISULTATI + CALENDARIO
         // =========================
-        const matchRows = calendarioHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/gi) || [];
+        const matchRows = calendarioHtml.match(/<tr data-team="[^"]+" class="[^"]*asterisk"[\s\S]*?<\/tr>/gi) || [];
         const seen = new Set();
 
         matchRows.forEach(row => {
-            if (!row.toLowerCase().includes("fino")) return;
-            if (!row.includes("<td")) return;
+            const teamIdsMatch = row.match(/data-team="([^"]+)"/i);
+            const teamIds = teamIdsMatch ? teamIdsMatch[1] : "";
+
+            if (!teamIds.includes("15502")) return; // 15502 = CR Fino Mornasco
 
             const tdMatches = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1]);
+
             if (tdMatches.length < 5) return;
 
             const date = clean(tdMatches[0]);
@@ -107,7 +109,7 @@ export default async function handler(req, res) {
             const teams = `${homeTeam} - ${awayTeam}`;
             const where = getWhereFromTeams(teams);
 
-            // partita futura
+            // Partita futura
             const noResultMatch = row.match(/<td colspan=['"]2['"] class=['"]noResult['"]>([^<]+)<\/td>/i);
             if (noResultMatch) {
                 const time = clean(noResultMatch[1]);
@@ -125,12 +127,13 @@ export default async function handler(req, res) {
                 const key = `${date}|${teams}|${time}|upcoming`;
                 if (!seen.has(key)) {
                     seen.add(key);
-                    matches.push(item);
+                    results.push(item);
                 }
                 return;
             }
 
-            // partita giocata
+            // Partita giocata:
+            // prendiamo gli ultimi due td numerici della riga
             const scoreCells = [...row.matchAll(/<td[^>]*>\s*(?:<a[^>]*>)?\s*(\d{1,3})\s*(?:<\/a>)?\s*<\/td>/gi)]
                 .map(m => m[1]);
 
@@ -158,28 +161,21 @@ export default async function handler(req, res) {
                 const key = `${date}|${teams}|${score1}-${score2}|played`;
                 if (!seen.has(key)) {
                     seen.add(key);
-                    matches.push(item);
+                    results.push(item);
                 }
             }
         });
 
-        matches.sort((a, b) => buildDate(a) - buildDate(b));
-
-        const now = new Date();
-        const played = matches.filter(match => match.status === "played");
-        const upcoming = matches.filter(match => buildDate(match) >= now || match.status === "upcoming");
+        // Ordine cronologico
+        results.sort((a, b) => buildDate(a) - buildDate(b));
 
         res.status(200).json({
             debug: {
                 standingsCount: standings.length,
-                resultsCount: played.length,
-                upcomingCount: upcoming.length,
-                totalMatchesCount: matches.length
+                resultsCount: results.length
             },
             standings,
-            results: played,
-            upcoming,
-            matches
+            results
         });
     } catch (err) {
         res.status(500).json({
