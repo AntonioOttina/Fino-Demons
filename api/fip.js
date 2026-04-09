@@ -24,37 +24,31 @@ export default async function handler(req, res) {
 
         function normalizeFinoName(name) {
             const lower = name.toLowerCase();
-            if (lower.includes("cr fino mornasco") || lower.includes("fino demons") || lower === "fino mornasco") {
+            if (
+                lower.includes("cr fino mornasco") ||
+                lower.includes("fino mornasco") ||
+                lower.includes("fino demons")
+            ) {
                 return "Fino Demons";
             }
             return name;
         }
 
         function splitTeams(rawTeams) {
-            const aliases = ["CR Fino Mornasco", "Fino Mornasco", "Fino Demons"];
             const cleaned = clean(rawTeams);
 
+            const aliases = ["CR Fino Mornasco", "Fino Mornasco", "Fino Demons"];
             for (const alias of aliases) {
-                const lower = cleaned.toLowerCase();
-                const aliasLower = alias.toLowerCase();
-                const idx = lower.indexOf(aliasLower);
-
+                const idx = cleaned.toLowerCase().indexOf(alias.toLowerCase());
                 if (idx === -1) continue;
 
                 const before = cleaned.slice(0, idx).trim();
                 const after = cleaned.slice(idx + alias.length).trim();
+                const fino = "Fino Demons";
 
-                if (!before && after) {
-                    return `${normalizeFinoName(alias)} - ${after}`;
-                }
-
-                if (before && !after) {
-                    return `${before} - ${normalizeFinoName(alias)}`;
-                }
-
-                if (before && after) {
-                    return `${before} - ${normalizeFinoName(alias)} ${after}`.replace(/\s+/g, " ").trim();
-                }
+                if (!before && after) return `${fino} - ${after}`;
+                if (before && !after) return `${before} - ${fino}`;
+                if (before && after) return `${before} - ${fino} ${after}`.replace(/\s+/g, " ").trim();
             }
 
             return cleaned;
@@ -70,9 +64,7 @@ export default async function handler(req, res) {
         const standings = [];
         const results = [];
 
-        // =========================
-        // CLASSIFICA
-        // =========================
+        // ===== CLASSIFICA =====
         let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
         rows = rows.slice(0, 12);
 
@@ -86,86 +78,102 @@ export default async function handler(req, res) {
             const points = clean(pointsMatch?.[1]);
 
             if (position && team && points) {
-                standings.push({
-                    position,
-                    team,
-                    points
-                });
+                standings.push({ position, team, points });
             }
         });
 
-        // =========================
-        // CALENDARIO / RISULTATI
-        // =========================
+        // ===== CALENDARIO / RISULTATI =====
+        // Strategia:
+        // 1. prendo tutte le righe che contengono data
+        // 2. tengo solo quelle con "Fino"
+        // 3. distinguo partite giocate e future
+
+        const allRows = calendarioHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
         const seen = new Set();
 
-        // Partite giocate: data + squadre + 2 punteggi
-        const playedRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,3})\s+(\d{1,3})(?=\s*<|\s*$)/gi;
+        for (const row of allRows) {
+            const text = clean(row);
 
-        let match;
-        while ((match = playedRegex.exec(calendarioHtml)) !== null) {
-            const date = clean(match[1]);
-            const teamsRaw = clean(match[2]);
-            const s1 = parseInt(match[3], 10);
-            const s2 = parseInt(match[4], 10);
+            if (!text.includes("/")) continue;
+            if (!text.toLowerCase().includes("fino")) continue;
 
-            if (!teamsRaw.toLowerCase().includes("fino")) continue;
+            const dateMatch = text.match(/\b(\d{2}\/\d{2})\b/);
+            if (!dateMatch) continue;
 
-            const teams = splitTeams(teamsRaw);
-            const [team1 = "", team2 = ""] = teams.split(" - ").map(t => t.trim());
+            const date = dateMatch[1];
 
-            let result = "";
-            if (team1.toLowerCase().includes("fino")) {
-                result = s1 > s2 ? "win" : "loss";
-            } else if (team2.toLowerCase().includes("fino")) {
-                result = s2 > s1 ? "win" : "loss";
+            // prova partita giocata: data + squadre + 2 numeri finali
+            let playedMatch = text.match(/^(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,3})\s+(\d{1,3})$/);
+
+            // se non trova, prova a pulire eventuale testo extra finale
+            if (!playedMatch) {
+                const m = text.match(/(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,3})\s+(\d{1,3})/);
+                if (m) playedMatch = m;
             }
 
-            const item = {
-                date,
-                teams,
-                score: `${s1} - ${s2}`,
-                time: "",
-                status: "played",
-                result,
-                phase: "",
-                where: getWhereFromTeams(teams)
-            };
+            if (playedMatch) {
+                const teamsRaw = playedMatch[2];
+                const s1 = parseInt(playedMatch[3], 10);
+                const s2 = parseInt(playedMatch[4], 10);
 
-            const key = `${item.date}|${item.teams}|${item.score}|played`;
-            if (!seen.has(key)) {
-                seen.add(key);
-                results.push(item);
+                const teams = splitTeams(teamsRaw);
+                const [team1 = "", team2 = ""] = teams.split(" - ").map(t => normalizeFinoName(t.trim()));
+
+                let result = "";
+                if (team1.toLowerCase().includes("fino")) {
+                    result = s1 > s2 ? "win" : "loss";
+                } else if (team2.toLowerCase().includes("fino")) {
+                    result = s2 > s1 ? "win" : "loss";
+                }
+
+                const item = {
+                    date,
+                    teams: `${team1} - ${team2}`,
+                    score: `${s1} - ${s2}`,
+                    time: "",
+                    status: "played",
+                    result,
+                    where: getWhereFromTeams(`${team1} - ${team2}`)
+                };
+
+                const key = `${item.date}|${item.teams}|${item.score}|played`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    results.push(item);
+                }
+                continue;
             }
-        }
 
-        // Partite future: data + squadre + orario
-        const upcomingRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,2}:\d{2})(?=\s*<|\s*$)/gi;
+            // partita futura: data + squadre + orario
+            let upcomingMatch = text.match(/^(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,2}:\d{2})$/);
 
-        while ((match = upcomingRegex.exec(calendarioHtml)) !== null) {
-            const date = clean(match[1]);
-            const teamsRaw = clean(match[2]);
-            const time = clean(match[3]);
+            if (!upcomingMatch) {
+                const m = text.match(/(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,2}:\d{2})/);
+                if (m) upcomingMatch = m;
+            }
 
-            if (!teamsRaw.toLowerCase().includes("fino")) continue;
+            if (upcomingMatch) {
+                const teamsRaw = upcomingMatch[2];
+                const time = upcomingMatch[3];
 
-            const teams = splitTeams(teamsRaw);
+                const teams = splitTeams(teamsRaw);
+                const [team1 = "", team2 = ""] = teams.split(" - ").map(t => normalizeFinoName(t.trim()));
 
-            const item = {
-                date,
-                teams,
-                score: "",
-                time,
-                status: "upcoming",
-                result: "",
-                phase: "",
-                where: getWhereFromTeams(teams)
-            };
+                const item = {
+                    date,
+                    teams: `${team1} - ${team2}`,
+                    score: "",
+                    time,
+                    status: "upcoming",
+                    result: "",
+                    where: getWhereFromTeams(`${team1} - ${team2}`)
+                };
 
-            const key = `${item.date}|${item.teams}|${item.time}|upcoming`;
-            if (!seen.has(key)) {
-                seen.add(key);
-                results.push(item);
+                const key = `${item.date}|${item.teams}|${item.time}|upcoming`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    results.push(item);
+                }
             }
         }
 
