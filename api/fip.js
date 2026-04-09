@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
     try {
-        const classificaUrl = "https://m.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=st";
-        const calendarioUrl = "https://m.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=cl";
+        const classificaUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=st";
+        const calendarioUrl = "https://www.playbasket.it/lombardia/league.php?lt=2&lf=M&lr=LO&lp=MI&lc=DR4&season=2026&lg=8&mod=cl";
 
         const [classificaRes, calendarioRes] = await Promise.all([
             fetch(classificaUrl),
@@ -18,6 +18,7 @@ export default async function handler(req, res) {
                 .replace(/&amp;/gi, "&")
                 .replace(/&#39;/g, "'")
                 .replace(/&quot;/g, '"')
+                .replace(/&#176;/g, "°")
                 .replace(/\s+/g, " ")
                 .trim();
         }
@@ -43,8 +44,20 @@ export default async function handler(req, res) {
         function getWhereFromTeams(teams) {
             const [home = ""] = teams.split(" - ").map(t => t.trim());
             return home.toLowerCase().includes("fino")
-                ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
+                ? "In Casa"
                 : "Trasferta";
+        }
+
+        function buildDate(match) {
+            const [day, month] = match.date.split("/").map(Number);
+            const year = month >= 10 ? 2025 : 2026;
+
+            if (match.time) {
+                const [hours, minutes] = match.time.split(":").map(Number);
+                return new Date(year, month - 1, day, hours || 0, minutes || 0, 0, 0);
+            }
+
+            return new Date(year, month - 1, day, 23, 59, 0, 0);
         }
 
         const standings = [];
@@ -119,8 +132,9 @@ export default async function handler(req, res) {
                 return;
             }
 
-            // Partita giocata
-            const scoreCells = [...row.matchAll(/<td[^>]*>(?:\s*<a[^>]*>)?(\d{1,3})(?:<\/a>)?\s*<\/td>/gi)]
+            // Partita giocata:
+            // prendiamo gli ultimi due td numerici della riga
+            const scoreCells = [...row.matchAll(/<td[^>]*>\s*(?:<a[^>]*>)?\s*(\d{1,3})\s*(?:<\/a>)?\s*<\/td>/gi)]
                 .map(m => m[1]);
 
             if (scoreCells.length >= 2) {
@@ -152,19 +166,7 @@ export default async function handler(req, res) {
             }
         });
 
-        // Ordine cronologico reale
-        function buildDate(match) {
-            const [day, month] = match.date.split("/").map(Number);
-            const year = month >= 10 ? 2025 : 2026;
-
-            if (match.status === "upcoming" && match.time) {
-                const [hours, minutes] = match.time.split(":").map(Number);
-                return new Date(year, month - 1, day, hours || 0, minutes || 0, 0, 0);
-            }
-
-            return new Date(year, month - 1, day, 23, 59, 0, 0);
-        }
-
+        // Ordine cronologico
         results.sort((a, b) => buildDate(a) - buildDate(b));
 
         res.status(200).json({
