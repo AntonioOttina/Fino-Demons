@@ -4,14 +4,15 @@ function parseMatchDate(dateStr) {
     const [day, month] = dateStr.split("/").map(Number);
     if (!day || !month) return null;
 
-    // Stagione 2025/26:
-    // ott-dic = 2025, gen-giu = 2026
     const year = month >= 10 ? 2025 : 2026;
     return new Date(year, month - 1, day, 0, 0, 0, 0);
 }
 
 function parseMatchTime(timeStr) {
-    if (!timeStr || !timeStr.includes(":")) return { hours: 23, minutes: 59 };
+    if (!timeStr || !timeStr.includes(":")) {
+        return { hours: 23, minutes: 59 };
+    }
+
     const [hours, minutes] = timeStr.split(":").map(Number);
     return {
         hours: Number.isFinite(hours) ? hours : 23,
@@ -35,7 +36,7 @@ function buildMatchDateTime(match) {
     );
 }
 
-function highlightFinoTeam(teams) {
+function renderTeams(teams) {
     const [team1 = "", team2 = ""] = teams.split(" - ").map(t => t.trim());
 
     return `
@@ -72,7 +73,6 @@ async function loadData() {
     }
 
     const allMatches = Array.isArray(data.results) ? [...data.results] : [];
-
     const now = new Date();
 
     const playedMatches = allMatches
@@ -102,6 +102,8 @@ async function loadData() {
         const next = upcomingMatches[0];
 
         if (next) {
+            const [team1 = "", team2 = ""] = next.teams.split(" - ").map(t => t.trim());
+
             nextMatchContainer.innerHTML = `
                 <div class="next-match-card">
                     <span class="next-match-label">
@@ -109,10 +111,15 @@ async function loadData() {
                     </span>
 
                     <div class="next-match-details">
-                        <h3>${next.teams.replace("CR Fino Mornasco", "Fino Demons")}</h3>
+                        <h3>
+                            <span class="${team1.toLowerCase().includes("fino") ? "team-highlight-light" : ""}">${team1}</span>
+                            <span class="next-match-vs">vs</span>
+                            <span class="${team2.toLowerCase().includes("fino") ? "team-highlight-light" : ""}">${team2}</span>
+                        </h3>
+
                         <div class="next-match-info">
                             <span><i class="fa-regular fa-clock"></i> ${next.date} - Ore ${next.time || "--:--"}</span>
-                            <span><i class="fa-solid fa-location-dot"></i> ${next.location || "Da definire"}</span>
+                            <span><i class="fa-solid fa-location-dot"></i> ${next.where}</span>
                         </div>
                     </div>
 
@@ -149,8 +156,8 @@ async function loadData() {
 
                 row.innerHTML = `
                     <div class="match-main">
-                        <div class="match-date">${match.date} • ${match.phase || ""} ${match.where || ""}</div>
-                        <div class="match-teams">${highlightFinoTeam(match.teams)}</div>
+                        <div class="match-date">${match.date} • ${match.where}</div>
+                        <div class="match-teams">${renderTeams(match.teams)}</div>
                     </div>
 
                     <div class="match-side">
@@ -165,14 +172,18 @@ async function loadData() {
         }
     }
 
-    // ===== PROSSIMA TRASFERTA IN FONDO =====
+    // ===== NOTA PROSSIMA TRASFERTA =====
     const nextAwayNote = document.getElementById("next-away-note");
 
     if (nextAwayNote) {
-        const nextAway = upcomingMatches.find(m => (m.where || "").toLowerCase().includes("trasferta"));
+        const nextAway = upcomingMatches.find(match => (match.where || "").toLowerCase().includes("trasferta"));
 
         if (nextAway) {
-            nextAwayNote.innerHTML = `<em>Prossima trasferta: ${nextAway.date} alle ${nextAway.time || "--:--"} contro ${nextAway.teams.replace("CR Fino Mornasco - ", "").replace(" - CR Fino Mornasco", "")}.</em>`;
+            const opponent = nextAway.teams
+                .replace("Fino Demons - ", "")
+                .replace(" - Fino Demons", "");
+
+            nextAwayNote.innerHTML = `<em>Prossima trasferta: ${nextAway.date} alle ${nextAway.time || "--:--"} contro ${opponent}.</em>`;
         } else {
             nextAwayNote.innerHTML = "";
         }

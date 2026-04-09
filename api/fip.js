@@ -22,6 +22,14 @@ export default async function handler(req, res) {
                 .trim();
         }
 
+        function normalizeFinoName(name) {
+            const lower = name.toLowerCase();
+            if (lower.includes("cr fino mornasco") || lower.includes("fino demons") || lower === "fino mornasco") {
+                return "Fino Demons";
+            }
+            return name;
+        }
+
         function splitTeams(rawTeams) {
             const aliases = ["CR Fino Mornasco", "Fino Mornasco", "Fino Demons"];
             const cleaned = clean(rawTeams);
@@ -36,18 +44,35 @@ export default async function handler(req, res) {
                 const before = cleaned.slice(0, idx).trim();
                 const after = cleaned.slice(idx + alias.length).trim();
 
-                if (!before && after) return `${alias} - ${after}`;
-                if (before && !after) return `${before} - ${alias}`;
-                if (before && after) return `${before} - ${alias} ${after}`.replace(/\s+/g, " ").trim();
+                if (!before && after) {
+                    return `${normalizeFinoName(alias)} - ${after}`;
+                }
+
+                if (before && !after) {
+                    return `${before} - ${normalizeFinoName(alias)}`;
+                }
+
+                if (before && after) {
+                    return `${before} - ${normalizeFinoName(alias)} ${after}`.replace(/\s+/g, " ").trim();
+                }
             }
 
             return cleaned;
         }
 
+        function getWhereFromTeams(teams) {
+            const [team1 = ""] = teams.split(" - ").map(t => t.trim());
+            return team1.toLowerCase().includes("fino")
+                ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
+                : "Trasferta";
+        }
+
         const standings = [];
         const results = [];
 
-        // ===== CLASSIFICA =====
+        // =========================
+        // CLASSIFICA
+        // =========================
         let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
         rows = rows.slice(0, 12);
 
@@ -69,81 +94,80 @@ export default async function handler(req, res) {
             }
         });
 
-        // ===== CALENDARIO / RISULTATI =====
-        const rowsCal = calendarioHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+        // =========================
+        // CALENDARIO / RISULTATI
+        // =========================
         const seen = new Set();
 
-        rowsCal.forEach(row => {
-            const text = clean(row);
+        // Partite giocate: data + squadre + 2 punteggi
+        const playedRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,3})\s+(\d{1,3})(?=\s*<|\s*$)/gi;
 
-            if (!text.toLowerCase().includes("fino")) return;
+        let match;
+        while ((match = playedRegex.exec(calendarioHtml)) !== null) {
+            const date = clean(match[1]);
+            const teamsRaw = clean(match[2]);
+            const s1 = parseInt(match[3], 10);
+            const s2 = parseInt(match[4], 10);
 
-            const dateMatch = text.match(/\b(\d{2}\/\d{2})\b/);
-            if (!dateMatch) return;
+            if (!teamsRaw.toLowerCase().includes("fino")) continue;
 
-            const date = dateMatch[1];
-            const afterDate = text.slice(text.indexOf(date) + date.length).trim();
+            const teams = splitTeams(teamsRaw);
+            const [team1 = "", team2 = ""] = teams.split(" - ").map(t => t.trim());
 
-            const playedMatch = afterDate.match(/^(.*)\s+(\d{1,3})\s+(\d{1,3})$/);
-            const upcomingMatch = afterDate.match(/^(.*)\s+(\d{1,2}:\d{2})$/);
-
-            let item = null;
-
-            if (playedMatch) {
-                const teamsRaw = playedMatch[1].trim();
-                const s1 = parseInt(playedMatch[2], 10);
-                const s2 = parseInt(playedMatch[3], 10);
-                const teams = splitTeams(teamsRaw);
-
-                const [team1, team2] = teams.split(" - ").map(t => t.trim());
-
-                let result = "";
-                if (team1?.toLowerCase().includes("fino")) {
-                    result = s1 > s2 ? "win" : "loss";
-                } else if (team2?.toLowerCase().includes("fino")) {
-                    result = s2 > s1 ? "win" : "loss";
-                }
-
-                item = {
-                    date,
-                    teams,
-                    score: `${s1} - ${s2}`,
-                    time: "",
-                    status: "played",
-                    result,
-                    phase: "",
-                    where: ""
-                };
-            } else if (upcomingMatch) {
-                const teamsRaw = upcomingMatch[1].trim();
-                const time = upcomingMatch[2].trim();
-                const teams = splitTeams(teamsRaw);
-
-                const finoHome = teams.toLowerCase().startsWith("cr fino mornasco") || teams.toLowerCase().startsWith("fino demons");
-                const where = finoHome
-                    ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
-                    : "Trasferta";
-
-                item = {
-                    date,
-                    teams,
-                    score: "",
-                    time,
-                    status: "upcoming",
-                    result: "",
-                    phase: "",
-                    where
-                };
+            let result = "";
+            if (team1.toLowerCase().includes("fino")) {
+                result = s1 > s2 ? "win" : "loss";
+            } else if (team2.toLowerCase().includes("fino")) {
+                result = s2 > s1 ? "win" : "loss";
             }
 
-            if (!item) return;
+            const item = {
+                date,
+                teams,
+                score: `${s1} - ${s2}`,
+                time: "",
+                status: "played",
+                result,
+                phase: "",
+                where: getWhereFromTeams(teams)
+            };
 
-            const key = `${item.date}|${item.teams}|${item.score}|${item.time}|${item.status}`;
+            const key = `${item.date}|${item.teams}|${item.score}|played`;
             if (!seen.has(key)) {
                 seen.add(key);
                 results.push(item);
             }
-        });
+        }
+
+        // Partite future: data + squadre + orario
+        const upcomingRegex = /data-team="[^"]+"[^>]*>\s*(\d{2}\/\d{2})\s+([^<]+?)\s+(\d{1,2}:\d{2})(?=\s*<|\s*$)/gi;
+
+        while ((match = upcomingRegex.exec(calendarioHtml)) !== null) {
+            const date = clean(match[1]);
+            const teamsRaw = clean(match[2]);
+            const time = clean(match[3]);
+
+            if (!teamsRaw.toLowerCase().includes("fino")) continue;
+
+            const teams = splitTeams(teamsRaw);
+
+            const item = {
+                date,
+                teams,
+                score: "",
+                time,
+                status: "upcoming",
+                result: "",
+                phase: "",
+                where: getWhereFromTeams(teams)
+            };
+
+            const key = `${item.date}|${item.teams}|${item.time}|upcoming`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                results.push(item);
+            }
+        }
 
         res.status(200).json({
             debug: {

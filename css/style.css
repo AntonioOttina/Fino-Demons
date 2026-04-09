@@ -980,3 +980,44 @@ footer {
         margin-top: 6px;
     }
 }
+.team-highlight-light {
+    color: #d8fff7;
+    font-weight: 800;
+}
+
+.btn-next-match {
+    background: var(--white);
+    color: var(--primary-green);
+    border: 2px solid var(--white);
+    margin-top: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.btn-next-match:hover {
+    background: #f3f4f6;
+    border-color: #f3f4f6;
+}
+
+.match-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.match-side {
+    flex-shrink: 0;
+}
+
+.match-time {
+    min-width: 72px;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    background: var(--off-white);
+    color: var(--primary-green);
+}
+
+.match-separator {
+    color: var(--text-light);
+}
