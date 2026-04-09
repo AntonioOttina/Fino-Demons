@@ -36,38 +36,18 @@ export default async function handler(req, res) {
                 const before = cleaned.slice(0, idx).trim();
                 const after = cleaned.slice(idx + alias.length).trim();
 
-                if (!before && after) {
-                    return `${alias} - ${after}`;
-                }
-
-                if (before && !after) {
-                    return `${before} - ${alias}`;
-                }
-
-                if (before && after) {
-                    return `${before} - ${alias} ${after}`.replace(/\s+/g, " ").trim();
-                }
+                if (!before && after) return `${alias} - ${after}`;
+                if (before && !after) return `${before} - ${alias}`;
+                if (before && after) return `${before} - ${alias} ${after}`.replace(/\s+/g, " ").trim();
             }
 
             return cleaned;
         }
 
-        function parseSeasonDate(ddmm) {
-            const [day, month] = ddmm.split("/").map(Number);
-            if (!day || !month) return null;
-
-            // stagione 2025/2026:
-            // ott-dic = 2025, gen-giu = 2026
-            const year = month >= 10 ? 2025 : 2026;
-            return new Date(year, month - 1, day);
-        }
-
         const standings = [];
         const results = [];
 
-        // =========================
-        // CLASSIFICA
-        // =========================
+        // ===== CLASSIFICA =====
         let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
         rows = rows.slice(0, 12);
 
@@ -89,9 +69,7 @@ export default async function handler(req, res) {
             }
         });
 
-        // =========================
-        // CALENDARIO / RISULTATI
-        // =========================
+        // ===== CALENDARIO / RISULTATI =====
         const rowsCal = calendarioHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
         const seen = new Set();
 
@@ -106,10 +84,7 @@ export default async function handler(req, res) {
             const date = dateMatch[1];
             const afterDate = text.slice(text.indexOf(date) + date.length).trim();
 
-            // Caso partita giocata: ... squadra squadra 67 57
             const playedMatch = afterDate.match(/^(.*)\s+(\d{1,3})\s+(\d{1,3})$/);
-
-            // Caso partita da giocare: ... squadra squadra 18:00
             const upcomingMatch = afterDate.match(/^(.*)\s+(\d{1,2}:\d{2})$/);
 
             let item = null;
@@ -131,26 +106,33 @@ export default async function handler(req, res) {
 
                 item = {
                     date,
-                    dateObj: parseSeasonDate(date)?.toISOString() || null,
                     teams,
                     score: `${s1} - ${s2}`,
                     time: "",
                     status: "played",
-                    result
+                    result,
+                    phase: "",
+                    where: ""
                 };
             } else if (upcomingMatch) {
                 const teamsRaw = upcomingMatch[1].trim();
                 const time = upcomingMatch[2].trim();
                 const teams = splitTeams(teamsRaw);
 
+                const finoHome = teams.toLowerCase().startsWith("cr fino mornasco") || teams.toLowerCase().startsWith("fino demons");
+                const where = finoHome
+                    ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
+                    : "Trasferta";
+
                 item = {
                     date,
-                    dateObj: parseSeasonDate(date)?.toISOString() || null,
                     teams,
                     score: "",
                     time,
                     status: "upcoming",
-                    result: ""
+                    result: "",
+                    phase: "",
+                    where
                 };
             }
 
