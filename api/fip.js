@@ -26,30 +26,33 @@ export default async function handler(req, res) {
         const results = [];
 
         // =========================
-        // CLASSIFICA GENERALE
-        // =========================
-        // Prende tutte le righe classifica e tiene solo le prime 12
-        // che corrispondono alla classifica generale del girone.
-        let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
-        rows = rows.slice(0, 12);
+// CLASSIFICA FIX ROBUSTO
+// =========================
 
-        rows.forEach(row => {
-            const positionMatch = row.match(/title=['"]Posizione in graduatoria['"][^>]*class=['"]colfrozen['"]>(\d+)/i);
-            const teamMatch = row.match(/class=["']sq colfrozen["'][^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/i);
-            const pointsMatch = row.match(/title=['"]Punti in classifica['"][^>]*class=['"]highlighted_data['"]>(\d+)/i);
+const rows = classificaHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
 
-            const position = clean(positionMatch ? positionMatch[1] : "");
-            const team = clean(teamMatch ? teamMatch[1] : "");
-            const points = clean(pointsMatch ? pointsMatch[1] : "");
+rows.forEach(row => {
+    const text = clean(row);
 
-            if (position && team && points) {
-                standings.push({
-                    position,
-                    team,
-                    points
-                });
-            }
-        });
+    const match = text.match(/^(\d+)\s+(.+?)\s+(\d+)$/);
+
+    if (match) {
+        const position = match[1];
+        const team = match[2];
+        const points = match[3];
+
+        if (team.length > 3 && parseInt(position) <= 20) {
+            standings.push({
+                position,
+                team,
+                points
+            });
+        }
+    }
+});
+
+// tieni solo le prime 12
+standings.splice(12);
 
         // =========================
         // RISULTATI
