@@ -1,5 +1,6 @@
 const rosterData = [
     { number: "12", name: "Damiano Mazzoccato", role: "Allenatore", coach: true },
+    { number: "🧑‍💼", name: "Alberto Bellò", role: "Dirigente tecnico e Direttore sportivo" },
     { number: 1, name: "Giacomo Arrighi", role: "" },
     { number: 2, name: "Pietro Gioia", role: "" },
     { number: 3, name: "Davide Guerra", role: "" },
