@@ -1,32 +1,68 @@
-<main class="section">
-    <div class="container">
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fino Demons | Calendario e Risultati</title>
+    <meta name="description" content="Calendario, risultati e classifica dei Fino Demons.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
 
-        <h1 class="page-title">Calendario & Risultati 25/26</h1>
-        <p class="section-subtitle">
-            Tutti i risultati della stagione del Circolo Ricreativo Finese.
-        </p>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-        <div id="next-match"></div>
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+            </div>
+        </div>
+    </nav>
 
-        <div class="results-box">
-            <div class="results-header">
-                <span>Partite Giocate</span>
-                <span style="font-size: 0.85rem; font-weight: 400; color: var(--text-light);">
-                    <i class="fa-solid fa-circle-down"></i> Scorri per vedere tutto
-                </span>
+    <main class="section">
+        <div class="container">
+
+            <h1 class="page-title">Calendario e Risultati</h1>
+            <p class="section-subtitle">
+                Risultati stagionali e classifica
+            </p>
+            <div id="next-match"></div>
+
+            <div class="results-box">
+                <div class="results-header">
+                    <span>Risultati</span>
+                </div>
+                <div id="results-list" class="results-list"></div>
             </div>
 
-            <div id="results-list" class="results-list"></div>
-        </div>
-
-        <p id="next-away-note" style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-top: 15px;"></p>
-
-        <div class="results-box" style="margin-top: 28px;">
-            <div class="results-header">
-                <span>Classifica</span>
+            <div class="results-box">
+                <div class="results-header">
+                    <span>Classifica</span>
+                </div>
+                <div id="standings-table" class="standings-table"></div>
             </div>
-            <div id="standings-table" class="standings-table"></div>
-        </div>
 
-    </div>
-</main>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
+        </div>
+    </footer>
+
+    <script src="js/results.js"></script>
+</body>
+</html>
