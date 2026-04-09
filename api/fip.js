@@ -22,41 +22,27 @@ export default async function handler(req, res) {
                 .trim();
         }
 
-        function normalizeFinoName(name) {
-            const lower = name.toLowerCase();
+        function normalizeTeamName(name) {
+            const cleaned = clean(name);
+            const lower = cleaned.toLowerCase();
+
             if (
                 lower.includes("cr fino mornasco") ||
-                lower.includes("fino mornasco") ||
-                lower.includes("fino demons")
+                lower.includes("fino demons") ||
+                lower === "fino mornasco"
             ) {
                 return "Fino Demons";
             }
-            return name;
-        }
 
-        function splitTeams(rawTeams) {
-            const cleaned = clean(rawTeams);
-
-            const aliases = ["CR Fino Mornasco", "Fino Mornasco", "Fino Demons"];
-            for (const alias of aliases) {
-                const idx = cleaned.toLowerCase().indexOf(alias.toLowerCase());
-                if (idx === -1) continue;
-
-                const before = cleaned.slice(0, idx).trim();
-                const after = cleaned.slice(idx + alias.length).trim();
-                const fino = "Fino Demons";
-
-                if (!before && after) return `${fino} - ${after}`;
-                if (before && !after) return `${before} - ${fino}`;
-                if (before && after) return `${before} - ${fino} ${after}`.replace(/\s+/g, " ").trim();
-            }
+            if (lower === "pallacanestro cabiate sq.b") return "Pallacanestro Cabiate";
+            if (lower === "pallacanestro figino sq.b") return "Pallacanestro Figino";
 
             return cleaned;
         }
 
         function getWhereFromTeams(teams) {
-            const [team1 = ""] = teams.split(" - ").map(t => t.trim());
-            return team1.toLowerCase().includes("fino")
+            const [home = ""] = teams.split(" - ").map(t => t.trim());
+            return home.toLowerCase().includes("fino")
                 ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
                 : "Trasferta";
         }
@@ -64,118 +50,122 @@ export default async function handler(req, res) {
         const standings = [];
         const results = [];
 
-        // ===== CLASSIFICA =====
-        let rows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
-        rows = rows.slice(0, 12);
+        // =========================
+        // CLASSIFICA
+        // =========================
+        let standingsRows = classificaHtml.match(/<tr class=['"]row_standings['"][\s\S]*?<\/tr>/gi) || [];
+        standingsRows = standingsRows.slice(0, 12);
 
-        rows.forEach(row => {
-            const positionMatch = row.match(/colfrozen['"]>(\d+)/i);
+        standingsRows.forEach(row => {
+            const positionMatch = row.match(/class=['"]colfrozen['"]>(\d+)/i);
             const teamMatch = row.match(/<a[^>]*>([^<]+)<\/a>/i);
-            const pointsMatch = row.match(/highlighted_data['"]>(\d+)/i);
+            const pointsMatch = row.match(/class=['"]highlighted_data['"]>(\d+)/i);
 
             const position = clean(positionMatch?.[1]);
             const team = clean(teamMatch?.[1]);
             const points = clean(pointsMatch?.[1]);
 
             if (position && team && points) {
-                standings.push({ position, team, points });
+                standings.push({
+                    position,
+                    team,
+                    points
+                });
             }
         });
 
-        // ===== CALENDARIO / RISULTATI =====
-        // Strategia:
-        // 1. prendo tutte le righe che contengono data
-        // 2. tengo solo quelle con "Fino"
-        // 3. distinguo partite giocate e future
-
-        const allRows = calendarioHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+        // =========================
+        // RISULTATI + CALENDARIO
+        // =========================
+        const matchRows = calendarioHtml.match(/<tr data-team="[^"]+" class="[^"]*asterisk"[\s\S]*?<\/tr>/gi) || [];
         const seen = new Set();
 
-        for (const row of allRows) {
-            const text = clean(row);
+        matchRows.forEach(row => {
+            const teamIdsMatch = row.match(/data-team="([^"]+)"/i);
+            const teamIds = teamIdsMatch ? teamIdsMatch[1] : "";
 
-            if (!text.includes("/")) continue;
-            if (!text.toLowerCase().includes("fino")) continue;
+            if (!teamIds.includes("15502")) return; // 15502 = CR Fino Mornasco
 
-            const dateMatch = text.match(/\b(\d{2}\/\d{2})\b/);
-            if (!dateMatch) continue;
+            const tdMatches = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1]);
 
-            const date = dateMatch[1];
+            if (tdMatches.length < 5) return;
 
-            // prova partita giocata: data + squadre + 2 numeri finali
-            let playedMatch = text.match(/^(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,3})\s+(\d{1,3})$/);
+            const date = clean(tdMatches[0]);
+            const homeTeam = normalizeTeamName(tdMatches[1]);
+            const awayTeam = normalizeTeamName(tdMatches[2]);
+            const teams = `${homeTeam} - ${awayTeam}`;
+            const where = getWhereFromTeams(teams);
 
-            // se non trova, prova a pulire eventuale testo extra finale
-            if (!playedMatch) {
-                const m = text.match(/(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,3})\s+(\d{1,3})/);
-                if (m) playedMatch = m;
-            }
-
-            if (playedMatch) {
-                const teamsRaw = playedMatch[2];
-                const s1 = parseInt(playedMatch[3], 10);
-                const s2 = parseInt(playedMatch[4], 10);
-
-                const teams = splitTeams(teamsRaw);
-                const [team1 = "", team2 = ""] = teams.split(" - ").map(t => normalizeFinoName(t.trim()));
-
-                let result = "";
-                if (team1.toLowerCase().includes("fino")) {
-                    result = s1 > s2 ? "win" : "loss";
-                } else if (team2.toLowerCase().includes("fino")) {
-                    result = s2 > s1 ? "win" : "loss";
-                }
+            // Partita futura
+            const noResultMatch = row.match(/<td colspan=['"]2['"] class=['"]noResult['"]>([^<]+)<\/td>/i);
+            if (noResultMatch) {
+                const time = clean(noResultMatch[1]);
 
                 const item = {
                     date,
-                    teams: `${team1} - ${team2}`,
-                    score: `${s1} - ${s2}`,
-                    time: "",
-                    status: "played",
-                    result,
-                    where: getWhereFromTeams(`${team1} - ${team2}`)
-                };
-
-                const key = `${item.date}|${item.teams}|${item.score}|played`;
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    results.push(item);
-                }
-                continue;
-            }
-
-            // partita futura: data + squadre + orario
-            let upcomingMatch = text.match(/^(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,2}:\d{2})$/);
-
-            if (!upcomingMatch) {
-                const m = text.match(/(\d{2}\/\d{2})\s+(.*?)\s+(\d{1,2}:\d{2})/);
-                if (m) upcomingMatch = m;
-            }
-
-            if (upcomingMatch) {
-                const teamsRaw = upcomingMatch[2];
-                const time = upcomingMatch[3];
-
-                const teams = splitTeams(teamsRaw);
-                const [team1 = "", team2 = ""] = teams.split(" - ").map(t => normalizeFinoName(t.trim()));
-
-                const item = {
-                    date,
-                    teams: `${team1} - ${team2}`,
+                    teams,
                     score: "",
                     time,
                     status: "upcoming",
                     result: "",
-                    where: getWhereFromTeams(`${team1} - ${team2}`)
+                    where
                 };
 
-                const key = `${item.date}|${item.teams}|${item.time}|upcoming`;
+                const key = `${date}|${teams}|${time}|upcoming`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    results.push(item);
+                }
+                return;
+            }
+
+            // Partita giocata
+            const scoreCells = [...row.matchAll(/<td[^>]*>(?:\s*<a[^>]*>)?(\d{1,3})(?:<\/a>)?\s*<\/td>/gi)]
+                .map(m => m[1]);
+
+            if (scoreCells.length >= 2) {
+                const score1 = parseInt(scoreCells[scoreCells.length - 2], 10);
+                const score2 = parseInt(scoreCells[scoreCells.length - 1], 10);
+
+                let result = "";
+                if (homeTeam.toLowerCase().includes("fino")) {
+                    result = score1 > score2 ? "win" : "loss";
+                } else if (awayTeam.toLowerCase().includes("fino")) {
+                    result = score2 > score1 ? "win" : "loss";
+                }
+
+                const item = {
+                    date,
+                    teams,
+                    score: `${score1} - ${score2}`,
+                    time: "",
+                    status: "played",
+                    result,
+                    where
+                };
+
+                const key = `${date}|${teams}|${score1}-${score2}|played`;
                 if (!seen.has(key)) {
                     seen.add(key);
                     results.push(item);
                 }
             }
+        });
+
+        // Ordine cronologico reale
+        function buildDate(match) {
+            const [day, month] = match.date.split("/").map(Number);
+            const year = month >= 10 ? 2025 : 2026;
+
+            if (match.status === "upcoming" && match.time) {
+                const [hours, minutes] = match.time.split(":").map(Number);
+                return new Date(year, month - 1, day, hours || 0, minutes || 0, 0, 0);
+            }
+
+            return new Date(year, month - 1, day, 23, 59, 0, 0);
         }
+
+        results.sort((a, b) => buildDate(a) - buildDate(b));
 
         res.status(200).json({
             debug: {
