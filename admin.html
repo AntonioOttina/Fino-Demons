@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fino Demons | Admin Risultati</title>
-    <meta name="description" content="Pannello admin per inserire i risultati delle partite dei Fino Demons.">
+    <title>Fino Demons | Admin</title>
+    <meta name="description" content="Area admin Fino Demons">
     <link rel="icon" type="image/png" href="images/favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,148 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-
-    <style>
-        .admin-wrapper {
-            max-width: 760px;
-            margin: 0 auto;
-        }
-
-        .admin-card {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-            margin-bottom: 24px;
-        }
-
-        .admin-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .admin-field {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .admin-field.full {
-            grid-column: 1 / -1;
-        }
-
-        .admin-field label {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .admin-field input,
-        .admin-field select {
-            height: 48px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 0 14px;
-            font-size: 1rem;
-            color: var(--text-dark);
-            background: white;
-        }
-
-        .admin-field input:focus,
-        .admin-field select:focus {
-            outline: none;
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
-        }
-
-        .admin-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 22px;
-            flex-wrap: wrap;
-        }
-
-        .admin-note {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            margin-top: 10px;
-        }
-
-        .saved-results-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .saved-result-item {
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 16px 18px;
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            align-items: center;
-            background: var(--off-white);
-        }
-
-        .saved-result-main {
-            flex: 1;
-        }
-
-        .saved-result-title {
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .saved-result-meta {
-            color: var(--text-light);
-            font-size: 0.92rem;
-        }
-
-        .saved-result-score {
-            font-weight: 800;
-            color: var(--primary-green);
-            font-size: 1.05rem;
-            white-space: nowrap;
-        }
-
-        .saved-result-delete {
-            background: #fee2e2;
-            color: #b91c1c;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .saved-result-delete:hover {
-            background: #fecaca;
-        }
-
-        .empty-admin-state {
-            color: var(--text-light);
-            text-align: center;
-            padding: 18px 0 4px;
-        }
-
-        @media (max-width: 768px) {
-            .admin-form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .saved-result-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .saved-result-score {
-                margin-top: 4px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -172,72 +30,110 @@
 
     <main class="section">
         <div class="container admin-wrapper">
-            <h1 class="page-title">Admin Risultati</h1>
-            <p class="section-subtitle">
-                Inserisci manualmente i risultati delle partite dei Fino Demons.
-            </p>
 
-            <div class="admin-card">
-                <form id="admin-result-form">
-                    <div class="admin-form-grid">
-                        <div class="admin-field">
-                            <label for="match-date">Data partita</label>
-                            <input type="date" id="match-date" required>
-                        </div>
+            <div id="admin-login-box" class="admin-card admin-login-card">
+                <h1 class="page-title">Area Admin</h1>
+                <p class="section-subtitle">Inserisci la password per accedere al pannello.</p>
 
-                        <div class="admin-field">
-                            <label for="match-location">Casa / Trasferta</label>
-                            <select id="match-location" required>
-                                <option value="">Seleziona</option>
-                                <option value="home">In casa</option>
-                                <option value="away">In trasferta</option>
-                            </select>
-                        </div>
-
-                        <div class="admin-field full">
-                            <label for="match-opponent">Squadra avversaria</label>
-                            <select id="match-opponent" required>
-                                <option value="">Seleziona la squadra</option>
-                                <option value="Leopandrillo Cantu">Leopandrillo Cantu</option>
-                                <option value="Pall. Figino">Pall. Figino</option>
-                                <option value="Olimpia Cadorago">Olimpia Cadorago</option>
-                                <option value="SCS Socco">SCS Socco</option>
-                                <option value="Basket Antoniana sq.B">Basket Antoniana sq.B</option>
-                                <option value="Pall. Cabiate">Pall. Cabiate</option>
-                                <option value="Pol. Cucciago 80">Pol. Cucciago 80</option>
-                                <option value="Alebbio Como B">Alebbio Como B</option>
-                                <option value="BT92 Cantù">BT92 Cantù</option>
-                                <option value="Pallacanestro Menaggio">Pallacanestro Menaggio</option>
-                                <option value="Alebbio Como A">Alebbio Como A</option>
-                            </select>
-                        </div>
-
-                        <div class="admin-field">
-                            <label for="fino-score">Punti Fino Demons</label>
-                            <input type="number" id="fino-score" min="0" max="200" required>
-                        </div>
-
-                        <div class="admin-field">
-                            <label for="opponent-score">Punti avversario</label>
-                            <input type="number" id="opponent-score" min="0" max="200" required>
-                        </div>
+                <div class="admin-form-grid single-column">
+                    <div class="admin-field full">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="Inserisci password">
                     </div>
+                </div>
 
-                    <div class="admin-actions">
-                        <button type="submit" class="btn btn-primary">Salva risultato</button>
-                        <button type="button" class="btn btn-secondary" id="clear-form-btn">Pulisci campi</button>
-                    </div>
+                <div class="admin-actions center-actions">
+                    <button id="admin-login-btn" class="btn btn-primary">Accedi</button>
+                </div>
 
-                    <p class="admin-note">
-                        Il risultato salvato verrà mostrato automaticamente nella pagina calendario su questo browser.
-                    </p>
-                </form>
+                <p id="admin-login-error" class="admin-error hidden">Accesso non autorizzato</p>
             </div>
 
-            <div class="admin-card">
-                <h2 style="margin-bottom: 18px;">Risultati inseriti</h2>
-                <div id="saved-results-list" class="saved-results-list"></div>
+            <div id="admin-panel" class="hidden">
+                <div class="admin-card">
+                    <div class="admin-panel-header">
+                        <div>
+                            <h1 class="page-title left-title">Gestione Partite</h1>
+                            <p class="admin-note top-note">
+                                Qui inserisci manualmente risultati e prossime partite. Il calendario si aggiorna automaticamente.
+                            </p>
+                        </div>
+                        <button id="admin-logout-btn" class="btn btn-secondary">Esci</button>
+                    </div>
+
+                    <form id="admin-match-form">
+                        <input type="hidden" id="match-id">
+
+                        <div class="admin-form-grid">
+                            <div class="admin-field">
+                                <label for="match-date">Data</label>
+                                <input type="date" id="match-date" required>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="match-time">Orario</label>
+                                <input type="time" id="match-time" required>
+                            </div>
+
+                            <div class="admin-field full">
+                                <label for="match-opponent">Avversario</label>
+                                <select id="match-opponent" required>
+                                    <option value="">Seleziona la squadra</option>
+                                    <option value="Leopandrillo Cantu">Leopandrillo Cantu</option>
+                                    <option value="Pall. Figino">Pall. Figino</option>
+                                    <option value="Olimpia Cadorago">Olimpia Cadorago</option>
+                                    <option value="SCS Socco">SCS Socco</option>
+                                    <option value="Basket Antoniana sq.B">Basket Antoniana sq.B</option>
+                                    <option value="Pall. Cabiate">Pall. Cabiate</option>
+                                    <option value="Pol. Cucciago 80">Pol. Cucciago 80</option>
+                                    <option value="Alebbio Como B">Alebbio Como B</option>
+                                    <option value="BT92 Cantù">BT92 Cantù</option>
+                                    <option value="Pallacanestro Menaggio">Pallacanestro Menaggio</option>
+                                    <option value="Alebbio Como A">Alebbio Como A</option>
+                                </select>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="match-location">Luogo</label>
+                                <select id="match-location" required>
+                                    <option value="">Seleziona</option>
+                                    <option value="home">In casa</option>
+                                    <option value="away">Trasferta</option>
+                                </select>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="match-status">Tipo partita</label>
+                                <select id="match-status" required>
+                                    <option value="upcoming">Prossima partita</option>
+                                    <option value="played">Partita giocata</option>
+                                </select>
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="fino-score">Punti Fino</label>
+                                <input type="number" id="fino-score" min="0" max="200" value="0">
+                            </div>
+
+                            <div class="admin-field">
+                                <label for="opponent-score">Punti avversario</label>
+                                <input type="number" id="opponent-score" min="0" max="200" value="0">
+                            </div>
+                        </div>
+
+                        <div class="admin-actions">
+                            <button type="submit" class="btn btn-primary">Salva partita</button>
+                            <button type="button" id="admin-reset-btn" class="btn btn-secondary">Pulisci</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-card">
+                    <h2 class="admin-list-title">Partite salvate</h2>
+                    <div id="saved-matches-list" class="saved-results-list"></div>
+                </div>
             </div>
+
         </div>
     </main>
 
