@@ -1,34 +1,7 @@
 const ADMIN_PASSWORD = "demons2026";
+
+// ===== LOGIN (LOCALE OK) =====
 const ADMIN_SESSION_KEY = "fino_admin_logged";
-const STORAGE_KEY = "fino_demons_matches";
-const FEATURED_KEY = "fino_demons_featured_match";
-
-function getMatches() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    try {
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-    } catch {
-        return [];
-    }
-}
-
-function saveMatches(matches) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(matches));
-}
-
-function getFeaturedMatchId() {
-    return localStorage.getItem(FEATURED_KEY) || "";
-}
-
-function setFeaturedMatchId(id) {
-    localStorage.setItem(FEATURED_KEY, id);
-}
-
-function clearFeaturedMatchId() {
-    localStorage.removeItem(FEATURED_KEY);
-}
 
 function isLogged() {
     return localStorage.getItem(ADMIN_SESSION_KEY) === "true";
@@ -38,29 +11,37 @@ function setLogged(value) {
     localStorage.setItem(ADMIN_SESSION_KEY, value ? "true" : "false");
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return "";
-    const d = new Date(dateStr + "T00:00:00");
-    if (Number.isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString("it-IT", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
+// ===== FETCH MATCH DA SERVER =====
+async function getMatches() {
+    const res = await fetch("/api/matches");
+    return await res.json();
+}
+
+// ===== SALVA MATCH SU SERVER =====
+async function saveMatch(matchData) {
+    const res = await fetch("/api/admin-save-match", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-admin-password": ADMIN_PASSWORD
+        },
+        body: JSON.stringify(matchData)
+    });
+
+    return await res.json();
+}
+
+// ===== DELETE MATCH =====
+async function deleteMatch(id) {
+    await fetch(`/api/delete-match?id=${id}`, {
+        method: "DELETE",
+        headers: {
+            "x-admin-password": ADMIN_PASSWORD
+        }
     });
 }
 
-function getTeamsText(match) {
-    return match.homeAway === "home"
-        ? `Fino Demons - ${match.opponent}`
-        : `${match.opponent} - Fino Demons`;
-}
-
-function getScoreText(match) {
-    if (match.status !== "played") return "Da giocare";
-    if (match.finoScore === "" || match.oppScore === "" || match.finoScore == null || match.oppScore == null) return "Risultato non inserito";
-    return `${match.finoScore} - ${match.oppScore}`;
-}
-
+// ===== UI =====
 function renderAuth() {
     const loginBox = document.getElementById("admin-login-box");
     const panel = document.getElementById("admin-panel");
@@ -75,177 +56,82 @@ function renderAuth() {
     }
 }
 
-function resetForm() {
-    document.getElementById("match-id").value = "";
-    document.getElementById("match-opponent").value = "";
-    document.getElementById("match-date").value = "";
-    document.getElementById("match-time").value = "";
-    document.getElementById("match-homeaway").value = "";
-    document.getElementById("match-status").value = "upcoming";
-    document.getElementById("match-score-fino").value = "";
-    document.getElementById("match-score-opp").value = "";
-}
-
-function fillForm(match) {
-    document.getElementById("match-id").value = match.id;
-    document.getElementById("match-opponent").value = match.opponent;
-    document.getElementById("match-date").value = match.date;
-    document.getElementById("match-time").value = match.time || "";
-    document.getElementById("match-homeaway").value = match.homeAway;
-    document.getElementById("match-status").value = match.status;
-    document.getElementById("match-score-fino").value = match.finoScore ?? "";
-    document.getElementById("match-score-opp").value = match.oppScore ?? "";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function renderMatchesList() {
+// ===== RENDER MATCH =====
+async function renderMatchesList() {
     const container = document.getElementById("admin-matches-list");
-    if (!container) return;
-
-    const matches = [...getMatches()].sort((a, b) => {
-        const da = new Date(`${a.date}T${a.time || "00:00"}:00`).getTime();
-        const db = new Date(`${b.date}T${b.time || "00:00"}:00`).getTime();
-        return da - db;
-    });
-
-    const featuredId = getFeaturedMatchId();
-
-    if (!matches.length) {
-        container.innerHTML = `<div class="empty-state">Nessuna partita inserita.</div>`;
-        return;
-    }
+    const matches = await getMatches();
 
     container.innerHTML = "";
 
-    matches.forEach(match => {
-        const card = document.createElement("div");
-        card.className = "admin-match-card";
+    matches
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach(match => {
 
-        card.innerHTML = `
-            <div class="admin-match-main">
-                <div class="admin-match-title">${getTeamsText(match)}</div>
-                <div class="admin-match-subtitle">
-                    ${formatDate(match.date)} · ${match.time || "--:--"} · ${match.homeAway === "home" ? "In casa" : "Trasferta"}
+            const card = document.createElement("div");
+            card.className = "admin-match-card";
+
+            card.innerHTML = `
+                <div>
+                    <strong>${match.homeAway === "home" ? "Fino Demons - " + match.opponent : match.opponent + " - Fino Demons"}</strong><br>
+                    ${match.date} - ${match.time || "--:--"}<br>
+                    ${match.status === "played" ? `${match.finoScore} - ${match.oppScore}` : "Da giocare"}
                 </div>
-                <div class="admin-match-subtitle">
-                    Stato: ${match.status === "played" ? "Giocata" : "Da giocare"} · ${getScoreText(match)}
+
+                <div>
+                    <button class="btn btn-secondary delete-btn">Elimina</button>
                 </div>
-                ${featuredId === match.id ? `<div class="admin-featured-label">In evidenza</div>` : ""}
-            </div>
+            `;
 
-            <div class="admin-match-actions">
-                <button class="btn btn-secondary btn-small edit-btn">Modifica</button>
-                <button class="btn btn-secondary btn-small feature-btn">
-                    ${featuredId === match.id ? "Rimuovi evidenza" : "Metti in evidenza"}
-                </button>
-                <button class="btn btn-secondary btn-small delete-btn">Elimina</button>
-            </div>
-        `;
+            card.querySelector(".delete-btn").onclick = async () => {
+                await deleteMatch(match.id);
+                renderMatchesList();
+            };
 
-        card.querySelector(".edit-btn").addEventListener("click", () => fillForm(match));
-
-        card.querySelector(".feature-btn").addEventListener("click", () => {
-            if (featuredId === match.id) {
-                clearFeaturedMatchId();
-            } else {
-                setFeaturedMatchId(match.id);
-            }
-            renderMatchesList();
+            container.appendChild(card);
         });
-
-        card.querySelector(".delete-btn").addEventListener("click", () => {
-            let matches = getMatches().filter(m => m.id !== match.id);
-            saveMatches(matches);
-
-            if (getFeaturedMatchId() === match.id) {
-                clearFeaturedMatchId();
-            }
-
-            renderMatchesList();
-            resetForm();
-        });
-
-        container.appendChild(card);
-    });
 }
 
-function setupLogin() {
-    const loginBtn = document.getElementById("admin-login-btn");
-    const passwordInput = document.getElementById("admin-password");
-    const errorBox = document.getElementById("admin-login-error");
-
-    loginBtn.addEventListener("click", () => {
-        if (passwordInput.value === ADMIN_PASSWORD) {
-            setLogged(true);
-            errorBox.textContent = "";
-            passwordInput.value = "";
-            renderAuth();
-        } else {
-            errorBox.textContent = "Accesso non autorizzato. Riprova.";
-        }
-    });
-
-    passwordInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            loginBtn.click();
-        }
-    });
-}
-
-function setupLogout() {
-    const logoutBtn = document.getElementById("admin-logout-btn");
-    logoutBtn.addEventListener("click", () => {
-        setLogged(false);
-        renderAuth();
-    });
-}
-
+// ===== FORM =====
 function setupForm() {
     const form = document.getElementById("match-form");
-    const resetBtn = document.getElementById("match-reset-btn");
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const id = document.getElementById("match-id").value || crypto.randomUUID();
-        const opponent = document.getElementById("match-opponent").value;
-        const date = document.getElementById("match-date").value;
-        const time = document.getElementById("match-time").value;
-        const homeAway = document.getElementById("match-homeaway").value;
-        const status = document.getElementById("match-status").value;
-        const finoScore = document.getElementById("match-score-fino").value;
-        const oppScore = document.getElementById("match-score-opp").value;
-
-        let matches = getMatches();
-
         const matchData = {
-            id,
-            opponent,
-            date,
-            time,
-            homeAway,
-            status,
-            finoScore: finoScore === "" ? "" : Number(finoScore),
-            oppScore: oppScore === "" ? "" : Number(oppScore)
+            opponent: document.getElementById("match-opponent").value,
+            date: document.getElementById("match-date").value,
+            time: document.getElementById("match-time").value,
+            homeAway: document.getElementById("match-homeaway").value,
+            status: document.getElementById("match-status").value,
+            finoScore: document.getElementById("match-score-fino").value || null,
+            oppScore: document.getElementById("match-score-opp").value || null
         };
 
-        const index = matches.findIndex(m => m.id === id);
-        if (index >= 0) {
-            matches[index] = matchData;
-        } else {
-            matches.push(matchData);
-        }
+        await saveMatch(matchData);
 
-        saveMatches(matches);
+        form.reset();
         renderMatchesList();
-        resetForm();
     });
-
-    resetBtn.addEventListener("click", () => resetForm());
 }
 
+// ===== LOGIN =====
+function setupLogin() {
+    const btn = document.getElementById("admin-login-btn");
+    const input = document.getElementById("admin-password");
+    const error = document.getElementById("admin-login-error");
+
+    btn.onclick = () => {
+        if (input.value === ADMIN_PASSWORD) {
+            setLogged(true);
+            renderAuth();
+        } else {
+            error.textContent = "Accesso non autorizzato";
+        }
+    };
+}
+
+// ===== INIT =====
 setupLogin();
-setupLogout();
 setupForm();
 renderAuth();
