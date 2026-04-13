@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fino Demons | Admin</title>
-    <meta name="description" content="Area admin Fino Demons">
+    <meta name="description" content="Pannello admin Fino Demons.">
     <link rel="icon" type="image/png" href="images/favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -29,108 +29,98 @@
     </nav>
 
     <main class="section">
-        <div class="container admin-wrapper">
+        <div class="container narrow">
 
-            <div id="admin-login-box" class="admin-card admin-login-card">
-                <h1 class="page-title">Area Admin</h1>
-                <p class="section-subtitle">Inserisci la password per accedere al pannello.</p>
+            <div id="admin-login-box" class="admin-card">
+                <h1 class="page-title admin-title">Area Admin</h1>
+                <p class="section-subtitle">Inserisci la password per accedere.</p>
 
-                <div class="admin-form-grid single-column">
-                    <div class="admin-field full">
-                        <label for="admin-password">Password</label>
-                        <input type="password" id="admin-password" placeholder="Inserisci password">
-                    </div>
+                <div class="admin-form">
+                    <label class="admin-label" for="admin-password">Password</label>
+                    <input type="password" id="admin-password" class="admin-input" placeholder="Inserisci la password">
+                    <button id="admin-login-btn" class="btn btn-primary admin-btn">Accedi</button>
+                    <p id="admin-login-error" class="admin-error"></p>
                 </div>
-
-                <div class="admin-actions center-actions">
-                    <button id="admin-login-btn" class="btn btn-primary">Accedi</button>
-                </div>
-
-                <p id="admin-login-error" class="admin-error hidden">Accesso non autorizzato</p>
             </div>
 
-            <div id="admin-panel" class="hidden">
+            <div id="admin-panel" class="admin-panel hidden">
                 <div class="admin-card">
-                    <div class="admin-panel-header">
+                    <div class="admin-panel-top">
                         <div>
-                            <h1 class="page-title left-title">Gestione Partite</h1>
-                            <p class="admin-note top-note">
-                                Qui inserisci manualmente risultati e prossime partite. Il calendario si aggiorna automaticamente.
-                            </p>
+                            <h1 class="page-title admin-title">Pannello Admin</h1>
+                            <p class="section-subtitle">Gestisci partite, risultati e prossima partita in evidenza.</p>
                         </div>
                         <button id="admin-logout-btn" class="btn btn-secondary">Esci</button>
                     </div>
 
-                    <form id="admin-match-form">
+                    <form id="match-form" class="admin-form-grid">
                         <input type="hidden" id="match-id">
 
-                        <div class="admin-form-grid">
-                            <div class="admin-field">
-                                <label for="match-date">Data</label>
-                                <input type="date" id="match-date" required>
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="match-time">Orario</label>
-                                <input type="time" id="match-time" required>
-                            </div>
-
-                            <div class="admin-field full">
-                                <label for="match-opponent">Avversario</label>
-                                <select id="match-opponent" required>
-                                    <option value="">Seleziona la squadra</option>
-                                    <option value="Leopandrillo Cantu">Leopandrillo Cantu</option>
-                                    <option value="Pall. Figino">Pall. Figino</option>
-                                    <option value="Olimpia Cadorago">Olimpia Cadorago</option>
-                                    <option value="SCS Socco">SCS Socco</option>
-                                    <option value="Basket Antoniana sq.B">Basket Antoniana sq.B</option>
-                                    <option value="Pall. Cabiate">Pall. Cabiate</option>
-                                    <option value="Pol. Cucciago 80">Pol. Cucciago 80</option>
-                                    <option value="Alebbio Como B">Alebbio Como B</option>
-                                    <option value="BT92 Cantù">BT92 Cantù</option>
-                                    <option value="Pallacanestro Menaggio">Pallacanestro Menaggio</option>
-                                    <option value="Alebbio Como A">Alebbio Como A</option>
-                                </select>
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="match-location">Luogo</label>
-                                <select id="match-location" required>
-                                    <option value="">Seleziona</option>
-                                    <option value="home">In casa</option>
-                                    <option value="away">Trasferta</option>
-                                </select>
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="match-status">Tipo partita</label>
-                                <select id="match-status" required>
-                                    <option value="upcoming">Prossima partita</option>
-                                    <option value="played">Partita giocata</option>
-                                </select>
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="fino-score">Punti Fino</label>
-                                <input type="number" id="fino-score" min="0" max="200" value="0">
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="opponent-score">Punti avversario</label>
-                                <input type="number" id="opponent-score" min="0" max="200" value="0">
-                            </div>
+                        <div>
+                            <label class="admin-label" for="match-opponent">Avversario</label>
+                            <select id="match-opponent" class="admin-input" required>
+                                <option value="">Seleziona avversario</option>
+                                <option value="Leopandrillo Cantu">Leopandrillo Cantu</option>
+                                <option value="Pallacanestro Figino sq.B">Pallacanestro Figino sq.B</option>
+                                <option value="Basket Antoniana sq.B">Basket Antoniana sq.B</option>
+                                <option value="BT92 Cantù">BT92 Cantù</option>
+                                <option value="Pallacanestro Cabiate sq.B">Pallacanestro Cabiate sq.B</option>
+                                <option value="SCS Socco">SCS Socco</option>
+                                <option value="Olimpia Cadorago">Olimpia Cadorago</option>
+                                <option value="Pallacanestro Menaggio">Pallacanestro Menaggio</option>
+                                <option value="Pol. Cucciago 80">Pol. Cucciago 80</option>
+                                <option value="Alebbio Como A">Alebbio Como A</option>
+                                <option value="Alebbio Como B">Alebbio Como B</option>
+                            </select>
                         </div>
 
-                        <div class="admin-actions">
+                        <div>
+                            <label class="admin-label" for="match-date">Data</label>
+                            <input type="date" id="match-date" class="admin-input" required>
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="match-time">Orario</label>
+                            <input type="time" id="match-time" class="admin-input" required>
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="match-homeaway">Luogo</label>
+                            <select id="match-homeaway" class="admin-input" required>
+                                <option value="">Seleziona</option>
+                                <option value="home">In casa</option>
+                                <option value="away">Trasferta</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="match-status">Stato</label>
+                            <select id="match-status" class="admin-input" required>
+                                <option value="upcoming">Da giocare</option>
+                                <option value="played">Giocata</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="match-score-fino">Punti Fino</label>
+                            <input type="number" id="match-score-fino" class="admin-input" min="0" placeholder="Es. 72">
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="match-score-opp">Punti avversario</label>
+                            <input type="number" id="match-score-opp" class="admin-input" min="0" placeholder="Es. 61">
+                        </div>
+
+                        <div class="admin-form-full">
                             <button type="submit" class="btn btn-primary">Salva partita</button>
-                            <button type="button" id="admin-reset-btn" class="btn btn-secondary">Pulisci</button>
+                            <button type="button" id="match-reset-btn" class="btn btn-secondary">Pulisci</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="admin-card">
-                    <h2 class="admin-list-title">Partite salvate</h2>
-                    <div id="saved-matches-list" class="saved-results-list"></div>
+                    <h2 class="admin-section-title">Partite salvate</h2>
+                    <div id="admin-matches-list" class="admin-matches-list"></div>
                 </div>
             </div>
 

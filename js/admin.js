@@ -1,21 +1,14 @@
-const STORAGE_KEY = "fino_demons_matches";
-const LOGIN_KEY = "fino_demons_admin_logged";
 const ADMIN_PASSWORD = "demons2026";
+const ADMIN_SESSION_KEY = "fino_admin_logged";
+const STORAGE_KEY = "fino_demons_matches";
+const FEATURED_KEY = "fino_demons_featured_match";
 
-const loginBox = document.getElementById("admin-login-box");
-const loginBtn = document.getElementById("admin-login-btn");
-const loginError = document.getElementById("admin-login-error");
-const passwordInput = document.getElementById("admin-password");
-const adminPanel = document.getElementById("admin-panel");
-const logoutBtn = document.getElementById("admin-logout-btn");
-
-const form = document.getElementById("admin-match-form");
-const resetBtn = document.getElementById("admin-reset-btn");
-const savedMatchesList = document.getElementById("saved-matches-list");
-
-function getSavedMatches() {
+function getMatches() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
     try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
     } catch {
         return [];
     }
@@ -25,186 +18,234 @@ function saveMatches(matches) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(matches));
 }
 
-function pad(num) {
-    return String(num).padStart(2, "0");
+function getFeaturedMatchId() {
+    return localStorage.getItem(FEATURED_KEY) || "";
 }
 
-function formatDateToDDMM(isoDate) {
-    const [year, month, day] = isoDate.split("-");
-    return `${day}/${month}`;
+function setFeaturedMatchId(id) {
+    localStorage.setItem(FEATURED_KEY, id);
 }
 
-function buildTeams(location, opponent) {
-    return location === "home"
-        ? `Fino Demons - ${opponent}`
-        : `${opponent} - Fino Demons`;
+function clearFeaturedMatchId() {
+    localStorage.removeItem(FEATURED_KEY);
 }
 
-function getWhere(location) {
-    return location === "home"
-        ? "In Casa (Palestra Comunale - Via L. Da Vinci)"
-        : "Trasferta";
+function isLogged() {
+    return localStorage.getItem(ADMIN_SESSION_KEY) === "true";
 }
 
-function computeResult(status, finoScore, opponentScore) {
-    if (status !== "played") return "";
-    if (Number(finoScore) > Number(opponentScore)) return "win";
-    if (Number(finoScore) < Number(opponentScore)) return "loss";
-    return "draw";
+function setLogged(value) {
+    localStorage.setItem(ADMIN_SESSION_KEY, value ? "true" : "false");
 }
 
-function sortMatches(matches) {
-    return [...matches].sort((a, b) => new Date(a.isoDate) - new Date(b.isoDate));
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr + "T00:00:00");
+    if (Number.isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("it-IT", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
 }
 
-function clearForm() {
-    form.reset();
-    document.getElementById("match-id").value = "";
-    document.getElementById("fino-score").value = 0;
-    document.getElementById("opponent-score").value = 0;
+function getTeamsText(match) {
+    return match.homeAway === "home"
+        ? `Fino Demons - ${match.opponent}`
+        : `${match.opponent} - Fino Demons`;
 }
 
-function renderSavedMatches() {
-    const matches = sortMatches(getSavedMatches());
+function getScoreText(match) {
+    if (match.status !== "played") return "Da giocare";
+    if (match.finoScore === "" || match.oppScore === "" || match.finoScore == null || match.oppScore == null) return "Risultato non inserito";
+    return `${match.finoScore} - ${match.oppScore}`;
+}
 
-    if (!matches.length) {
-        savedMatchesList.innerHTML = `<div class="empty-admin-state">Nessuna partita salvata.</div>`;
-        return;
+function renderAuth() {
+    const loginBox = document.getElementById("admin-login-box");
+    const panel = document.getElementById("admin-panel");
+
+    if (isLogged()) {
+        loginBox.classList.add("hidden");
+        panel.classList.remove("hidden");
+        renderMatchesList();
+    } else {
+        loginBox.classList.remove("hidden");
+        panel.classList.add("hidden");
     }
-
-    savedMatchesList.innerHTML = matches.map(match => `
-        <div class="saved-result-item">
-            <div class="saved-result-main">
-                <div class="saved-result-title">${match.teams}</div>
-                <div class="saved-result-meta">
-                    ${match.date} • ${match.time} • ${match.where} • ${match.status === "played" ? "Giocata" : "Da giocare"}
-                </div>
-            </div>
-            <div class="saved-result-score">${match.status === "played" ? match.score : "—"}</div>
-            <div class="saved-result-actions">
-                <button class="saved-result-edit" data-id="${match.id}">Modifica</button>
-                <button class="saved-result-delete" data-id="${match.id}">Elimina</button>
-            </div>
-        </div>
-    `).join("");
-
-    document.querySelectorAll(".saved-result-edit").forEach(button => {
-        button.addEventListener("click", () => editMatch(button.dataset.id));
-    });
-
-    document.querySelectorAll(".saved-result-delete").forEach(button => {
-        button.addEventListener("click", () => deleteMatch(button.dataset.id));
-    });
 }
 
-function editMatch(id) {
-    const matches = getSavedMatches();
-    const match = matches.find(item => item.id === id);
-    if (!match) return;
+function resetForm() {
+    document.getElementById("match-id").value = "";
+    document.getElementById("match-opponent").value = "";
+    document.getElementById("match-date").value = "";
+    document.getElementById("match-time").value = "";
+    document.getElementById("match-homeaway").value = "";
+    document.getElementById("match-status").value = "upcoming";
+    document.getElementById("match-score-fino").value = "";
+    document.getElementById("match-score-opp").value = "";
+}
 
+function fillForm(match) {
     document.getElementById("match-id").value = match.id;
-    document.getElementById("match-date").value = match.isoDate;
-    document.getElementById("match-time").value = match.time;
     document.getElementById("match-opponent").value = match.opponent;
-    document.getElementById("match-location").value = match.location;
+    document.getElementById("match-date").value = match.date;
+    document.getElementById("match-time").value = match.time || "";
+    document.getElementById("match-homeaway").value = match.homeAway;
     document.getElementById("match-status").value = match.status;
-    document.getElementById("fino-score").value = match.finoScore;
-    document.getElementById("opponent-score").value = match.opponentScore;
-
+    document.getElementById("match-score-fino").value = match.finoScore ?? "";
+    document.getElementById("match-score-opp").value = match.oppScore ?? "";
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function deleteMatch(id) {
-    const updated = getSavedMatches().filter(item => item.id !== id);
-    saveMatches(updated);
-    renderSavedMatches();
-}
+function renderMatchesList() {
+    const container = document.getElementById("admin-matches-list");
+    if (!container) return;
 
-function unlockAdmin() {
-    loginBox.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-}
+    const matches = [...getMatches()].sort((a, b) => {
+        const da = new Date(`${a.date}T${a.time || "00:00"}:00`).getTime();
+        const db = new Date(`${b.date}T${b.time || "00:00"}:00`).getTime();
+        return da - db;
+    });
 
-function lockAdmin() {
-    localStorage.removeItem(LOGIN_KEY);
-    adminPanel.classList.add("hidden");
-    loginBox.classList.remove("hidden");
-    passwordInput.value = "";
-}
+    const featuredId = getFeaturedMatchId();
 
-loginBtn?.addEventListener("click", () => {
-    const value = passwordInput.value;
-
-    if (value === ADMIN_PASSWORD) {
-        localStorage.setItem(LOGIN_KEY, "true");
-        loginError.classList.add("hidden");
-        unlockAdmin();
-    } else {
-        loginError.classList.remove("hidden");
-        passwordInput.value = "";
-        passwordInput.focus();
-    }
-});
-
-passwordInput?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        loginBtn.click();
-    }
-});
-
-logoutBtn?.addEventListener("click", lockAdmin);
-
-form?.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const id = document.getElementById("match-id").value;
-    const isoDate = document.getElementById("match-date").value;
-    const date = formatDateToDDMM(isoDate);
-    const time = document.getElementById("match-time").value;
-    const opponent = document.getElementById("match-opponent").value;
-    const location = document.getElementById("match-location").value;
-    const status = document.getElementById("match-status").value;
-    const finoScore = document.getElementById("fino-score").value;
-    const opponentScore = document.getElementById("opponent-score").value;
-
-    if (!isoDate || !time || !opponent || !location || !status) {
+    if (!matches.length) {
+        container.innerHTML = `<div class="empty-state">Nessuna partita inserita.</div>`;
         return;
     }
 
-    const teams = buildTeams(location, opponent);
-    const where = getWhere(location);
-    const result = computeResult(status, finoScore, opponentScore);
-    const score = status === "played" ? `${finoScore} - ${opponentScore}` : "";
+    container.innerHTML = "";
 
-    const match = {
-        id: id || `${isoDate}_${time}_${location}_${opponent}`.replace(/\s+/g, "_"),
-        isoDate,
-        date,
-        time,
-        opponent,
-        location,
-        status,
-        teams,
-        where,
-        finoScore,
-        opponentScore,
-        score,
-        result
-    };
+    matches.forEach(match => {
+        const card = document.createElement("div");
+        card.className = "admin-match-card";
 
-    const matches = getSavedMatches().filter(item => item.id !== match.id);
-    matches.push(match);
-    saveMatches(matches);
+        card.innerHTML = `
+            <div class="admin-match-main">
+                <div class="admin-match-title">${getTeamsText(match)}</div>
+                <div class="admin-match-subtitle">
+                    ${formatDate(match.date)} · ${match.time || "--:--"} · ${match.homeAway === "home" ? "In casa" : "Trasferta"}
+                </div>
+                <div class="admin-match-subtitle">
+                    Stato: ${match.status === "played" ? "Giocata" : "Da giocare"} · ${getScoreText(match)}
+                </div>
+                ${featuredId === match.id ? `<div class="admin-featured-label">In evidenza</div>` : ""}
+            </div>
 
-    renderSavedMatches();
-    clearForm();
-});
+            <div class="admin-match-actions">
+                <button class="btn btn-secondary btn-small edit-btn">Modifica</button>
+                <button class="btn btn-secondary btn-small feature-btn">
+                    ${featuredId === match.id ? "Rimuovi evidenza" : "Metti in evidenza"}
+                </button>
+                <button class="btn btn-secondary btn-small delete-btn">Elimina</button>
+            </div>
+        `;
 
-resetBtn?.addEventListener("click", clearForm);
+        card.querySelector(".edit-btn").addEventListener("click", () => fillForm(match));
 
-if (localStorage.getItem(LOGIN_KEY) === "true") {
-    unlockAdmin();
+        card.querySelector(".feature-btn").addEventListener("click", () => {
+            if (featuredId === match.id) {
+                clearFeaturedMatchId();
+            } else {
+                setFeaturedMatchId(match.id);
+            }
+            renderMatchesList();
+        });
+
+        card.querySelector(".delete-btn").addEventListener("click", () => {
+            let matches = getMatches().filter(m => m.id !== match.id);
+            saveMatches(matches);
+
+            if (getFeaturedMatchId() === match.id) {
+                clearFeaturedMatchId();
+            }
+
+            renderMatchesList();
+            resetForm();
+        });
+
+        container.appendChild(card);
+    });
 }
 
-renderSavedMatches();
+function setupLogin() {
+    const loginBtn = document.getElementById("admin-login-btn");
+    const passwordInput = document.getElementById("admin-password");
+    const errorBox = document.getElementById("admin-login-error");
+
+    loginBtn.addEventListener("click", () => {
+        if (passwordInput.value === ADMIN_PASSWORD) {
+            setLogged(true);
+            errorBox.textContent = "";
+            passwordInput.value = "";
+            renderAuth();
+        } else {
+            errorBox.textContent = "Accesso non autorizzato. Riprova.";
+        }
+    });
+
+    passwordInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            loginBtn.click();
+        }
+    });
+}
+
+function setupLogout() {
+    const logoutBtn = document.getElementById("admin-logout-btn");
+    logoutBtn.addEventListener("click", () => {
+        setLogged(false);
+        renderAuth();
+    });
+}
+
+function setupForm() {
+    const form = document.getElementById("match-form");
+    const resetBtn = document.getElementById("match-reset-btn");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById("match-id").value || crypto.randomUUID();
+        const opponent = document.getElementById("match-opponent").value;
+        const date = document.getElementById("match-date").value;
+        const time = document.getElementById("match-time").value;
+        const homeAway = document.getElementById("match-homeaway").value;
+        const status = document.getElementById("match-status").value;
+        const finoScore = document.getElementById("match-score-fino").value;
+        const oppScore = document.getElementById("match-score-opp").value;
+
+        let matches = getMatches();
+
+        const matchData = {
+            id,
+            opponent,
+            date,
+            time,
+            homeAway,
+            status,
+            finoScore: finoScore === "" ? "" : Number(finoScore),
+            oppScore: oppScore === "" ? "" : Number(oppScore)
+        };
+
+        const index = matches.findIndex(m => m.id === id);
+        if (index >= 0) {
+            matches[index] = matchData;
+        } else {
+            matches.push(matchData);
+        }
+
+        saveMatches(matches);
+        renderMatchesList();
+        resetForm();
+    });
+
+    resetBtn.addEventListener("click", () => resetForm());
+}
+
+setupLogin();
+setupLogout();
+setupForm();
+renderAuth();
