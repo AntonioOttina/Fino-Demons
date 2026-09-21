@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fino Demons | Partite</title>
     <meta name="description" content="Azioni, intensità e momenti vissuti sul parquet.">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,23 +13,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/gallery.css">
+<link rel="stylesheet" href="demons.css">
+<script src="demons.js" defer></script>
 </head>
-<body>
+<body id="top"><a class="skip-link" href="#main">Vai al contenuto</a>
 
-    <nav>
-        <div class="container nav-content">
-            <a href="index.html" class="nav-logo">
-                <img src="images/logo.jpg" alt="Logo Fino Demons">
-                <span class="nav-logo-text">Fino Demons</span>
-            </a>
-            <div class="nav-menu">
-                <a href="index.html">Home</a>
-                <a href="gallery.html">Gallery</a>
-            </div>
-        </div>
-    </nav>
+    <nav aria-label="Navigazione principale"><div class="container nav-content"><a href="index.html" class="nav-logo"><img src="images/logo.jpg" alt="Fino Demons" width="52" height="52"><span class="nav-logo-text">FINO DEMONS<small>BASKETBALL CLUB</small></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="main-menu" hidden>Menu <span aria-hidden="true">☰</span></button><div class="nav-menu" id="main-menu"><a href="chi-siamo.html">Il club</a><a href="roster.html">Roster</a><a href="calendario.html">Partite</a><a href="gallery.html">Gallery</a><a href="sponsor.html">Partner</a><a href="contatti.html">Contatti ↗</a></div></div></nav>
 
-    <main class="section gallery-detail-page">
+    <main id="main" class="section gallery-detail-page">
         <div class="container">
             <a href="gallery.html" class="gallery-back-link">
                 <i class="fa-solid fa-arrow-left"></i>
@@ -92,15 +83,7 @@
         </button>
     </div>
 
-    <footer>
-        <div class="container">
-            <div class="footer-logo">
-                <img src="images/logo.jpg" alt="Logo Fino Demons">
-            </div>
-            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
-            <p class="footer-text">&copy; 2026 Fino Demons</p>
-        </div>
-    </footer>
+    <footer><div class="container footer-top"><a class="footer-wordmark" href="index.html">FINO<br><span>DEMONS.</span></a><div><p>Una squadra. Un paese. La stessa passione.</p><a href="https://www.instagram.com/fino_demons/" target="_blank" rel="noopener">Instagram ↗</a><a href="contatti.html">Contatti ↗</a></div></div><div class="container footer-bottom"><span>© 2026 Fino Demons · Fino Mornasco (CO)</span><a href="admin.html">Area riservata</a><a href="#top">Torna su ↑</a></div></footer>
 
     <script src="js/gallery.js"></script>
 </body>
