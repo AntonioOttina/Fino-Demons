@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fino Demons | Tifoseria</title>
+    <meta name="description" content="Il tifo, l'atmosfera e le persone che sostengono i Demons.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gallery.css">
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="gallery.html">Gallery</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="section gallery-detail-page">
+        <div class="container">
+            <a href="gallery.html" class="gallery-back-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                Torna alla Gallery
+            </a>
+
+            <div class="gallery-detail-heading">
+                <div class="gallery-detail-icon">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                    <h1 class="page-title">Tifoseria</h1>
+                    <p class="section-subtitle">Il tifo, l'atmosfera e le persone che sostengono i Demons.</p>
+                </div>
+            </div>
+
+            <div id="gallery-empty" class="gallery-empty hidden">
+                <i class="fa-regular fa-images"></i>
+                <h2>Le foto arriveranno qui</h2>
+                <p>Questa sezione è pronta. Appena vengono caricate le immagini, compariranno automaticamente nella griglia.</p>
+            </div>
+
+            <div id="gallery-photo-grid" class="gallery-grid-detailed">
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento1.jpg" alt="Tifoseria 1" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento2.jpg" alt="Tifoseria 2" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento3.jpg" alt="Tifoseria 3" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento4.jpg" alt="Tifoseria 4" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento5.jpg" alt="Tifoseria 5" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+                    <button class="gallery-photo-card" type="button">
+                        <img src="images/gallery/eventi/evento6.jpg" alt="Tifoseria 6" class="gallery-photo" loading="lazy">
+                        <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+                    </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <button class="lightbox-close" type="button" aria-label="Chiudi">&times;</button>
+        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Foto precedente">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <img class="lightbox-image" id="lightbox-image" alt="Foto ingrandita">
+        <button class="lightbox-nav lightbox-next" type="button" aria-label="Foto successiva">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
+        </div>
+    </footer>
+
+    <script src="js/gallery.js"></script>
+</body>
+</html>
