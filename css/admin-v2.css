@@ -1,0 +1,170 @@
+/* =========================================================
+   FINO DEMONS - ADMIN / CLASSIFICA V2
+   Questo file si aggiunge DOPO css/style.css.
+   ========================================================= */
+
+.admin-container {
+    max-width: 1120px;
+}
+
+.admin-login-card {
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.admin-subtitle-left {
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.admin-grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.admin-card-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.admin-card-heading > i {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary-green);
+    background: var(--green-soft);
+    font-size: 1.15rem;
+}
+
+.admin-card-heading .admin-section-title {
+    margin-bottom: 4px;
+}
+
+.admin-help {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.admin-help-spaced {
+    margin-top: -8px;
+    margin-bottom: 18px;
+}
+
+.admin-score-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.admin-status {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 800;
+}
+
+.admin-status.ok {
+    color: #047857;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+.admin-status.error {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.admin-match-main {
+    min-width: 0;
+}
+
+.standings-table {
+    overflow-x: auto;
+}
+
+.standings-inner-v2 {
+    min-width: 760px;
+}
+
+.standings-row-v2 {
+    display: grid;
+    grid-template-columns:
+        42px
+        minmax(200px, 1fr)
+        52px
+        52px
+        52px
+        64px
+        64px
+        64px
+        58px;
+
+    align-items: center;
+
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--white);
+
+    font-size: 0.9rem;
+}
+
+.standings-row-v2:last-child {
+    border-bottom: none;
+}
+
+.standings-row-v2 > div:not(:nth-child(2)) {
+    text-align: center;
+}
+
+.standings-head-v2 {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    background: #f8fafc;
+
+    color: var(--text-light);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.standings-fino-row {
+    background: linear-gradient(
+        90deg,
+        rgba(15, 118, 110, 0.09),
+        rgba(15, 118, 110, 0.02)
+    );
+}
+
+.standings-row-v2 .points {
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .admin-grid-two {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .admin-score-pair {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-card {
+        padding: 22px 18px;
+    }
+}
