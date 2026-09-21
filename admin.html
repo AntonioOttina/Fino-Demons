@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fino Demons | Admin</title>
+    <meta name="description" content="Pannello admin Fino Demons.">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin-v2.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+                <span class="nav-logo-text">Fino Demons</span>
+            </a>
+
+            <div class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="calendario.html">Calendario</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="section">
+        <div class="container admin-container">
+
+            <div id="admin-login-box" class="admin-card admin-login-card">
+                <h1 class="page-title admin-title">Area Admin</h1>
+                <p class="section-subtitle">
+                    Inserisci la password per gestire risultati, classifica e prossima partita.
+                </p>
+
+                <form id="admin-login-form" class="admin-form">
+                    <div>
+                        <label class="admin-label" for="admin-password">Password</label>
+                        <input
+                            type="password"
+                            id="admin-password"
+                            class="admin-input"
+                            autocomplete="current-password"
+                            placeholder="Inserisci la password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary admin-btn">
+                        <i class="fa-solid fa-lock-open"></i>
+                        Accedi
+                    </button>
+
+                    <p id="admin-login-error" class="admin-error"></p>
+                </form>
+            </div>
+
+            <div id="admin-panel" class="admin-panel hidden">
+
+                <div class="admin-card">
+                    <div class="admin-panel-top">
+                        <div>
+                            <h1 class="page-title admin-title">Pannello Admin</h1>
+                            <p class="section-subtitle admin-subtitle-left">
+                                Gestisci manualmente tutte le partite del girone.
+                            </p>
+                        </div>
+
+                        <button id="admin-logout-btn" class="btn btn-secondary" type="button">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Esci
+                        </button>
+                    </div>
+
+                    <div id="admin-status" class="admin-status hidden"></div>
+                </div>
+
+                <div class="admin-grid-two">
+
+                    <section class="admin-card">
+                        <div class="admin-card-heading">
+                            <i class="fa-solid fa-basketball"></i>
+                            <div>
+                                <h2 class="admin-section-title">Inserisci risultato</h2>
+                                <p class="admin-help">
+                                    Squadra 1 è la squadra di casa. Ogni risultato aggiorna automaticamente la classifica.
+                                </p>
+                            </div>
+                        </div>
+
+                        <form id="result-form" class="admin-form-grid">
+
+                            <div>
+                                <label class="admin-label" for="result-home-team">Squadra 1 · Casa</label>
+                                <select id="result-home-team" class="admin-input" required></select>
+                            </div>
+
+                            <div>
+                                <label class="admin-label" for="result-away-team">Squadra 2 · Trasferta</label>
+                                <select id="result-away-team" class="admin-input" required></select>
+                            </div>
+
+                            <div>
+                                <label class="admin-label" for="result-date">Data partita</label>
+                                <input type="date" id="result-date" class="admin-input" required>
+                            </div>
+
+                            <div class="admin-score-pair">
+                                <div>
+                                    <label class="admin-label" for="result-home-score">Punti Squadra 1</label>
+                                    <input type="number" id="result-home-score" class="admin-input" min="0" step="1" required>
+                                </div>
+
+                                <div>
+                                    <label class="admin-label" for="result-away-score">Punti Squadra 2</label>
+                                    <input type="number" id="result-away-score" class="admin-input" min="0" step="1" required>
+                                </div>
+                            </div>
+
+                            <div class="admin-form-full">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Salva risultato
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="admin-card">
+                        <div class="admin-card-heading">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <div>
+                                <h2 class="admin-section-title">Prossima partita Fino</h2>
+                                <p class="admin-help">
+                                    Imposta l'incontro che comparirà nel riquadro verde del sito.
+                                </p>
+                            </div>
+                        </div>
+
+                        <form id="next-match-form" class="admin-form-grid">
+
+                            <div class="admin-form-full">
+                                <label class="admin-label" for="next-opponent">Avversario</label>
+                                <select id="next-opponent" class="admin-input" required></select>
+                            </div>
+
+                            <div>
+                                <label class="admin-label" for="next-date">Data</label>
+                                <input type="date" id="next-date" class="admin-input" required>
+                            </div>
+
+                            <div>
+                                <label class="admin-label" for="next-time">Ora</label>
+                                <input type="time" id="next-time" class="admin-input" required>
+                            </div>
+
+                            <div class="admin-form-full">
+                                <label class="admin-label" for="next-home-away">Casa / Trasferta</label>
+                                <select id="next-home-away" class="admin-input" required>
+                                    <option value="home">In casa</option>
+                                    <option value="away">In trasferta</option>
+                                </select>
+                            </div>
+
+                            <div class="admin-form-full">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-star"></i>
+                                    Imposta prossima partita
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                </div>
+
+                <section class="admin-card">
+                    <h2 class="admin-section-title">Prossima partita impostata</h2>
+                    <div id="admin-next-match"></div>
+                </section>
+
+                <section class="admin-card">
+                    <h2 class="admin-section-title">Risultati inseriti</h2>
+                    <p class="admin-help admin-help-spaced">
+                        Qui trovi tutte le partite usate per calcolare la classifica.
+                    </p>
+
+                    <div id="admin-results-list" class="admin-matches-list"></div>
+                </section>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="images/logo.jpg" alt="Logo Fino Demons">
+            </div>
+
+            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
+            <p class="footer-text">&copy; 2026 Fino Demons</p>
+        </div>
+    </footer>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
