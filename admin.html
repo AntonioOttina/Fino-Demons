@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Fino Demons | Admin</title>
-    <meta name="description" content="Pannello admin Fino Demons.">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta name="description" content="Pannello admin Fino Demons per risultati, classifica e prossima partita.">
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,26 +16,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin-v2.css">
+    <link rel="stylesheet" href="demons.css">
+    <script src="demons.js" defer></script>
 </head>
 
-<body>
+<body id="top" class="admin-desk"><a class="skip-link" href="#main">Vai al contenuto</a>
 
-    <nav>
-        <div class="container nav-content">
-            <a href="index.html" class="nav-logo">
-                <img src="images/logo.jpg" alt="Logo Fino Demons">
-                <span class="nav-logo-text">Fino Demons</span>
-            </a>
+    <nav aria-label="Navigazione principale"><div class="container nav-content"><a href="index.html" class="nav-logo"><img src="images/logo.jpg" alt="Fino Demons" width="52" height="52"><span class="nav-logo-text">FINO DEMONS<small>BASKETBALL CLUB</small></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="main-menu" hidden>Menu <span aria-hidden="true">☰</span></button><div class="nav-menu" id="main-menu"><a href="index.html">Home</a><a href="chi-siamo.html">Il club</a><a href="roster.html">Roster</a><a href="calendario.html">Partite</a><a href="gallery.html">Gallery</a><a href="sponsor.html">Partner</a><a href="contatti.html">Contatti</a><a class="nav-admin-link" href="admin.html" aria-current="page">Admin</a></div></div></nav>
 
-            <div class="nav-menu">
-                <a href="index.html">Home</a>
-                <a href="calendario.html">Calendario</a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="section">
+    <main id="main" class="section admin-section">
         <div class="container admin-container">
+
+            <section class="admin-hero">
+                <p class="eyebrow">Area riservata</p>
+                <h1>Pannello Demons</h1>
+                <p>
+                    Da qui inserisci i risultati di tutte le squadre del girone, imposti la prossima partita
+                    dei Fino Demons e lasci che la classifica si aggiorni da sola sul sito pubblico.
+                </p>
+                <div class="admin-hero-actions">
+                    <a class="btn btn-secondary" href="calendario.html">
+                        <i class="fa-solid fa-table-list"></i>
+                        Vedi calendario pubblico
+                    </a>
+                </div>
+            </section>
 
             <div id="admin-login-box" class="admin-card admin-login-card">
                 <h1 class="page-title admin-title">Area Admin</h1>
@@ -72,7 +77,7 @@
                         <div>
                             <h1 class="page-title admin-title">Pannello Admin</h1>
                             <p class="section-subtitle admin-subtitle-left">
-                                Gestisci manualmente tutte le partite del girone.
+                                Gestisci manualmente partite, prossima gara e foto della gallery.
                             </p>
                         </div>
 
@@ -197,21 +202,68 @@
                     <div id="admin-results-list" class="admin-matches-list"></div>
                 </section>
 
+                <section class="admin-card">
+                    <div class="admin-card-heading">
+                        <i class="fa-regular fa-images"></i>
+                        <div>
+                            <h2 class="admin-section-title">Gallery foto</h2>
+                            <p class="admin-help">
+                                Scegli la sezione, seleziona una o più foto dal tuo dispositivo e caricale sul sito.
+                                Le immagini vengono ottimizzate prima dell'invio.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form id="gallery-upload-form" class="admin-form-grid">
+                        <div>
+                            <label class="admin-label" for="gallery-category">Sezione</label>
+                            <select id="gallery-category" class="admin-input" required>
+                                <option value="squadra">Foto di Squadra</option>
+                                <option value="partite">Partite</option>
+                                <option value="eventi">Tifoseria</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="admin-label" for="gallery-files">Foto</label>
+                            <input
+                                type="file"
+                                id="gallery-files"
+                                class="admin-input"
+                                accept="image/jpeg,image/png,image/webp"
+                                multiple
+                                required
+                            >
+                        </div>
+
+                        <div class="admin-form-full">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                Carica foto
+                            </button>
+
+                            <span id="gallery-upload-hint" class="admin-inline-hint">
+                                Puoi selezionare fino a 12 foto alla volta.
+                            </span>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="admin-card">
+                    <h2 class="admin-section-title">Foto caricate</h2>
+                    <p class="admin-help admin-help-spaced">
+                        Le foto eliminate spariscono subito dalla gallery pubblica.
+                    </p>
+
+                    <div id="admin-gallery-list" class="admin-gallery-list"></div>
+                </section>
+
             </div>
 
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-logo">
-                <img src="images/logo.jpg" alt="Logo Fino Demons">
-            </div>
-
-            <p class="footer-text">Fino Demons - Fino Mornasco (CO)</p>
-            <p class="footer-text">&copy; 2026 Fino Demons</p>
-        </div>
-    </footer>
+    <footer><div class="container footer-top"><a class="footer-wordmark" href="index.html">FINO<br><span>DEMONS.</span></a><div><p>Una squadra. Un paese. La stessa passione.</p><a href="https://www.instagram.com/fino_demons/" target="_blank" rel="noopener">Instagram ↗</a><a href="contatti.html">Contatti ↗</a></div></div><div class="container footer-bottom"><span>© 2026 Fino Demons · Fino Mornasco (CO)</span><a href="admin.html">Area riservata</a><a href="#top">Torna su ↑</a></div></footer>
 
     <script src="js/admin.js"></script>
 </body>

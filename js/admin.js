@@ -7,7 +7,18 @@ const LEGACY_STORAGE_KEYS = [
 
 const state = {
     teams: [],
-    matches: []
+    matches: [],
+    gallery: {
+        squadra: [],
+        partite: [],
+        eventi: []
+    }
+};
+
+const GALLERY_LABELS = {
+    squadra: "Foto di Squadra",
+    partite: "Partite",
+    eventi: "Tifoseria"
 };
 
 // Pulizia definitiva del vecchio sistema localStorage.
@@ -229,15 +240,70 @@ function renderResults() {
     `).join("");
 }
 
+function renderGalleryList() {
+    const container = document.getElementById("admin-gallery-list");
+    if (!container) return;
+
+    const sections = Object.entries(GALLERY_LABELS).map(([category, label]) => {
+        const photos = Array.isArray(state.gallery[category])
+            ? state.gallery[category]
+            : [];
+
+        const body = photos.length
+            ? photos.map(photo => `
+                <div class="admin-gallery-photo">
+                    <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(label)}" loading="lazy">
+                    <div>
+                        <strong>${escapeHtml(photo.name)}</strong>
+                        <span>${escapeHtml(label)}</span>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-small"
+                        data-delete-gallery="${escapeHtml(photo.id)}"
+                    >
+                        Elimina
+                    </button>
+                </div>
+            `).join("")
+            : `<div class="empty-state">Nessuna foto caricata in questa sezione.</div>`;
+
+        return `
+            <section class="admin-gallery-section">
+                <h3>${escapeHtml(label)}</h3>
+                <div class="admin-gallery-photos">${body}</div>
+            </section>
+        `;
+    }).join("");
+
+    container.innerHTML = sections;
+}
+
 function renderAdminData() {
     populateTeamSelects();
     renderNextMatch();
     renderResults();
+    renderGalleryList();
+}
+
+async function loadGalleryData() {
+    const data = await apiRequest("/api/admin-gallery");
+    state.gallery = {
+        squadra: Array.isArray(data.sections?.squadra) ? data.sections.squadra : [],
+        partite: Array.isArray(data.sections?.partite) ? data.sections.partite : [],
+        eventi: Array.isArray(data.sections?.eventi) ? data.sections.eventi : []
+    };
 }
 
 async function loadAdminData() {
     try {
-        const data = await apiRequest("/api/admin-data");
+        const [data] = await Promise.all([
+            apiRequest("/api/admin-data"),
+            loadGalleryData().catch(error => {
+                state.gallery = { squadra: [], partite: [], eventi: [] };
+                showStatus(`Gallery non disponibile: ${error.message}`, "error");
+            })
+        ]);
 
         state.teams = Array.isArray(data.teams) ? data.teams : [];
         state.matches = Array.isArray(data.matches) ? data.matches : [];
@@ -258,6 +324,47 @@ async function loadAdminData() {
 
         return false;
     }
+}
+
+function readFileAsImage(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+            const img = new Image();
+            img.addEventListener("load", () => resolve(img), { once: true });
+            img.addEventListener("error", () => reject(new Error("Immagine non leggibile")), { once: true });
+            img.src = reader.result;
+        }, { once: true });
+
+        reader.addEventListener("error", () => reject(new Error("File non leggibile")), { once: true });
+        reader.readAsDataURL(file);
+    });
+}
+
+async function optimizePhoto(file) {
+    if (!file.type.startsWith("image/")) {
+        throw new Error("Puoi caricare solo immagini.");
+    }
+
+    const img = await readFileAsImage(file);
+    const maxSize = 1800;
+    const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+    const width = Math.max(1, Math.round(img.width * scale));
+    const height = Math.max(1, Math.round(img.height * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+    context.drawImage(img, 0, 0, width, height);
+
+    return {
+        name: file.name,
+        type: "image/jpeg",
+        dataUrl: canvas.toDataURL("image/jpeg", 0.82)
+    };
 }
 
 document.getElementById("admin-login-form").addEventListener("submit", async event => {
@@ -361,8 +468,79 @@ document.getElementById("next-match-form").addEventListener("submit", async even
     }
 });
 
+document.getElementById("gallery-upload-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const filesInput = document.getElementById("gallery-files");
+    const category = document.getElementById("gallery-category").value;
+    const files = Array.from(filesInput.files || []);
+
+    if (!files.length) {
+        showStatus("Seleziona almeno una foto.", "error");
+        return;
+    }
+
+    if (files.length > 12) {
+        showStatus("Puoi caricare massimo 12 foto alla volta.", "error");
+        return;
+    }
+
+    try {
+        showStatus("Ottimizzo e carico le foto...");
+
+        let uploadedCount = 0;
+
+        for (const file of files) {
+            const photo = await optimizePhoto(file);
+
+            await apiRequest("/api/admin-gallery", {
+                method: "POST",
+                body: JSON.stringify({ category, photos: [photo] })
+            });
+
+            uploadedCount += 1;
+            showStatus(`Caricate ${uploadedCount} di ${files.length} foto...`);
+        }
+
+        form.reset();
+        document.getElementById("gallery-category").value = category;
+
+        showStatus(`${uploadedCount} foto caricate nella gallery.`);
+        await loadGalleryData();
+        renderGalleryList();
+    } catch (error) {
+        showStatus(error.message, "error");
+    }
+});
+
 document.getElementById("admin-panel").addEventListener("click", async event => {
-    const button = event.target.closest("[data-delete-id]");
+    const resultButton = event.target.closest("[data-delete-id]");
+    const galleryButton = event.target.closest("[data-delete-gallery]");
+
+    if (galleryButton) {
+        const path = galleryButton.dataset.deleteGallery;
+
+        if (!window.confirm("Vuoi davvero eliminare questa foto dalla gallery?")) {
+            return;
+        }
+
+        try {
+            await apiRequest(`/api/admin-gallery?path=${encodeURIComponent(path)}`, {
+                method: "DELETE"
+            });
+
+            showStatus("Foto eliminata.");
+            await loadGalleryData();
+            renderGalleryList();
+        } catch (error) {
+            showStatus(error.message, "error");
+        }
+
+        return;
+    }
+
+    const button = resultButton;
     if (!button) return;
 
     const id = button.dataset.deleteId;

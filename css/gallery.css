@@ -325,6 +325,16 @@
     color: var(--text-light);
 }
 
+.gallery-loading {
+    grid-column: 1 / -1;
+    padding: 36px 20px;
+    text-align: center;
+    border: 1px dashed rgba(15, 118, 110, 0.25);
+    background: white;
+    color: var(--text-light);
+    font-weight: 800;
+}
+
 /* LIGHTBOX */
 
 .lightbox {

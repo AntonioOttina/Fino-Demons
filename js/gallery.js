@@ -6,81 +6,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!grid || !lightbox || !lightboxImage) return;
 
+    const section = grid.dataset.gallerySection || "";
     const closeButton = lightbox.querySelector(".lightbox-close");
     const prevButton = lightbox.querySelector(".lightbox-prev");
     const nextButton = lightbox.querySelector(".lightbox-next");
 
-    let validImages = [];
+    let photos = [];
     let currentIndex = 0;
-    let pendingChecks = 0;
 
-    const cards = Array.from(grid.querySelectorAll(".gallery-photo-card"));
-    pendingChecks = cards.length;
-
-    function finishImageCheck() {
-        pendingChecks -= 1;
-
-        if (pendingChecks > 0) return;
-
-        validImages = Array.from(grid.querySelectorAll(".gallery-photo-card"))
-            .filter(card => !card.classList.contains("image-missing"));
-
-        if (!validImages.length) {
-            grid.classList.add("hidden");
-            emptyState?.classList.remove("hidden");
-        } else {
-            grid.classList.remove("hidden");
-            emptyState?.classList.add("hidden");
-        }
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
-    cards.forEach(card => {
-        const img = card.querySelector("img");
+    function renderEmpty(message = "Le foto arriveranno qui") {
+        grid.classList.add("hidden");
 
-        if (!img) {
-            card.classList.add("image-missing");
-            card.remove();
-            finishImageCheck();
+        if (!emptyState) return;
+
+        emptyState.classList.remove("hidden");
+        emptyState.innerHTML = `
+            <i class="fa-regular fa-images"></i>
+            <h2>${escapeHtml(message)}</h2>
+            <p>Questa sezione è pronta. Appena vengono caricate le immagini dal pannello admin, compariranno automaticamente nella griglia.</p>
+        `;
+    }
+
+    function renderPhotos() {
+        if (!photos.length) {
+            renderEmpty();
             return;
         }
 
-        const markMissing = () => {
-            card.classList.add("image-missing");
-            card.remove();
-            finishImageCheck();
-        };
+        emptyState?.classList.add("hidden");
+        grid.classList.remove("hidden");
+        grid.innerHTML = photos.map((photo, index) => `
+            <button class="gallery-photo-card" type="button" data-index="${index}">
+                <img src="${escapeHtml(photo.url)}" alt="Foto Fino Demons" class="gallery-photo" loading="lazy">
+                <span class="gallery-photo-overlay"><i class="fa-solid fa-expand"></i></span>
+            </button>
+        `).join("");
+    }
 
-        const markReady = () => {
-            finishImageCheck();
-        };
-
-        if (img.complete) {
-            if (img.naturalWidth > 0) {
-                markReady();
-            } else {
-                markMissing();
-            }
-        } else {
-            img.addEventListener("load", markReady, { once: true });
-            img.addEventListener("error", markMissing, { once: true });
+    async function loadPhotos() {
+        if (!section) {
+            renderEmpty("Sezione gallery non configurata");
+            return;
         }
-    });
 
-    function refreshImages() {
-        validImages = Array.from(grid.querySelectorAll(".gallery-photo-card"));
+        grid.innerHTML = `
+            <div class="gallery-loading">
+                Caricamento foto...
+            </div>
+        `;
+
+        try {
+            const response = await fetch(`/api/gallery-data?category=${encodeURIComponent(section)}`, {
+                credentials: "same-origin"
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.error || "Gallery non disponibile");
+            }
+
+            photos = Array.isArray(data.photos) ? data.photos : [];
+            renderPhotos();
+        } catch (error) {
+            renderEmpty(error.message);
+        }
     }
 
     function openLightbox(index) {
-        refreshImages();
+        if (!photos.length) return;
 
-        if (!validImages.length) return;
+        currentIndex = (index + photos.length) % photos.length;
 
-        currentIndex = (index + validImages.length) % validImages.length;
-
-        const img = validImages[currentIndex].querySelector("img");
-
-        lightboxImage.src = img.src;
-        lightboxImage.alt = img.alt || "Foto Fino Demons";
+        const photo = photos[currentIndex];
+        lightboxImage.src = photo.url;
+        lightboxImage.alt = "Foto Fino Demons";
 
         lightbox.classList.add("open");
         lightbox.setAttribute("aria-hidden", "false");
@@ -98,12 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = event.target.closest(".gallery-photo-card");
         if (!card) return;
 
-        refreshImages();
-        const index = validImages.indexOf(card);
-
-        if (index >= 0) {
-            openLightbox(index);
-        }
+        openLightbox(Number(card.dataset.index || 0));
     });
 
     closeButton?.addEventListener("click", closeLightbox);
@@ -129,4 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.key === "ArrowLeft") openLightbox(currentIndex - 1);
         if (event.key === "ArrowRight") openLightbox(currentIndex + 1);
     });
+
+    loadPhotos();
 });
